@@ -1,0 +1,17 @@
+.row
+  .row
+   .large-4.columns
+     h3 JSON Schema
+     textarea(style="height:300px", ng-model="rawJsonSchema")
+     div.alert-box.alert(ng-show="jsonError", ng-bind-html-unsafe="jsonError")     
+   .large-4.columns
+     h3 Front YAML content
+     textarea(ng-model="yamlFront", style="height:300px")
+   .large-4.columns
+     h3 Generated Form
+     form(ng-show="rawJsonSchema")
+       span(ng-repeat="(key, field) in jsonSchema.properties")
+         label {{key}}
+         input(type="{{field.type}}", ng-model="data[key]")
+       label Content
+       textarea(ng-show="data['__content']", style="height : 500px") {{data['__content']}}
