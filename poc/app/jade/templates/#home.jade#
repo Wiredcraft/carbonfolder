@@ -2,7 +2,7 @@
   .row(ng-show="User.isLogged()")
    .large-12.columns
      center
-       a.button(href="/#/project") Gogogoogo
+       a.button(href="/#/project") 
   .row(ng-show="!User.isLogged()")
     .large-12.columns
       center

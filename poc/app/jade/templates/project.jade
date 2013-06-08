@@ -1,0 +1,12 @@
+
+.row
+  .row
+    .large-4.large-offset-4.columns.panel
+      h3 Projects
+      ul.no-bullet
+        hr
+        li(ng-repeat="project in projects") 
+          a(href="#/project/{{project}}") {{project}}
+          span.button.alert.tiny(style="float:right", ng-click="deleteProject(project)") Delete
+          hr
+      div.button.small(ng-click="createNewProject()") Create new project

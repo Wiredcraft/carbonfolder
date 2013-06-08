@@ -1,0 +1,40 @@
+.row
+  .row
+    .large-12.columns
+      h3 {{project_name}}
+        small &nbsp; project
+      hr
+  .row
+
+    Sidebar
+
+    // Sibebar
+    .large-3.columns
+      h4 Contents
+      ul.no-bullet.panel
+        li(ng-repeat="content in contents", style="width:185px", ng-click="editContentType(content)").button.small.secondary
+          span {{content}}
+      div.button.small(ng-click="createNewContentType()") Create new content type
+
+
+    .large-9.columns(ng-hide="edit_mode || !current_type")
+      h4 {{content_schema.title}} content listing
+      div.alert-box(ng-show="current_contents.length == 0") No content was created
+      ul.no-bullet(ng-show="current_contents.length > 0")
+        li(ng-repeat="ctn in current_contents", ng-click="prepareNewContent(ctn)") {{ctn}}
+      hr
+      div.button.small(ng-click="prepareNewContent()") Create a new {{content_schema.title}}
+
+
+    .large-9.columns(ng-show="edit_mode")
+      h4 New {{content_schema.title}} content : {{filename}}
+      hr
+      form(ng-submit="createNewContent()")
+        label Filename
+        input(type="text", ng-model="filename")
+        span(ng-repeat="(key, field) in content_schema.properties")
+          label {{key}}
+          input(type="{{field.type}}", ng-model="data[key]")
+        label Content
+        textarea(style="height : 300px", ng-model="data['__content']")
+        input.button.small(type="submit") 

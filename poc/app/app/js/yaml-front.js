@@ -2,6 +2,18 @@
 
 var jsYaml = {};
 
+
+jsYaml.jsonToYaml = function(json) {
+  var yaml = '---\n';
+  
+  for (var prop in json) {
+    if (prop != '__content')
+      yaml += prop.concat(': ', json[prop], '\n');
+  }
+
+  return yaml.concat('---\n', json.__content);    
+};
+
 jsYaml.convert = function (text, name) {
   name = name || '__content';
   

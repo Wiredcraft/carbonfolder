@@ -3,18 +3,35 @@
 if (window.location.host.indexOf('localhost') > -1)
   DEBUG = true;
 
-var DCMS = angular.module('DCMS', ['MainController']);
+var DCMS = angular.module('DCMS', ['MainController', 'DropboxWrapper', 'Feedback', 'Filters']);
 
 DCMS.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $routeProvider
     .when('/', {
       templateUrl : 'templates/home.html',
-      controller : 'HomeCtrl',
+      controller : 'HomeCtrl'
+    })
+    .when('/projects', {
+      templateUrl : 'templates/project.html',
+      controller : 'ProjectCtrl',
       menu : {
-	title : 'Home',
+	title : 'Projects',
 	left : true
       }
     })
+    .when('/project/:project_name', {
+      templateUrl : 'templates/edit.html',
+      controller : 'EditCtrl',
+      reloadOnSearch : false
+    })
+    .when('/project/:project_name/new_type', {
+      templateUrl : 'templates/new_type.html',
+      controller : 'NewTypeCtrl'
+    })
+    // .when('/project/:project_name/:content_type', {
+    //   templateUrl : 'templates/edit_type.html',
+    //   controller : 'NewTypeCtrl'
+    // })
     .when('/foundation4', {
       templateUrl : 'templates/foundation4.html',
       controller : 'NopCtrl',
@@ -28,7 +45,7 @@ DCMS.config(['$routeProvider', '$locationProvider', function($routeProvider, $lo
     });
 }]);
 
-DCMS.run(['$log', function($log) {
+DCMS.run(['$log', 'Dropbox', 'User', function($log, Dropbox, User) {
   // Disable all log when production
   if (!DEBUG) {
     // Can be forwarded to Logman
@@ -37,6 +54,13 @@ DCMS.run(['$log', function($log) {
     $log.info = function(arguments) {};
     $log.warn = function(arguments) {};
   }
+  Dropbox.isAuth(function(err, user) {
+    console.log(user);
+    if (user) {
+      User.set(user);
+    }
+  });
+
   $log.log('Init app');
 }]);
 

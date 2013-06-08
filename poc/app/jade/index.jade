@@ -33,28 +33,31 @@ html(lang='en', x-ng-app='DCMS')
     - })
 
     body
+      
+      div.contain-to-grid
+        nav.top-bar(ng-controller="NavbarCtrl")
+          ul.title-area
+            li(class="name")
+              h1
+                a(href="/#/", title="Home") #{title}
+          section.top-bar-section
+            ul.left
+              li(class="divider")
+              li(ng-repeat="el in menuLeft", ng-class="{active : isActive(el.href)}")
+                a(ng-href="{{ el.href }}", title="el.title", ng-bind="el.title")
+              li(class="divider")	
+            ul.right
+              li(class="divider")
+              li(ng-repeat="el in menuRight", ng-class="{active : isActive(el.href)}")
+                a(ng-href="{{ el.href }}", title="el.title", ng-bind="el.title")
+              li(class="divider")	
 
-    nav.top-bar(ng-controller="NavbarCtrl")
-      ul.title-area
-        li(class="name")
-          h1
-            a(href="/#/", title="Home") #{title}
-      section.top-bar-section
-        ul.left
-          li(class="divider")
-          li(ng-repeat="el in menuLeft", ng-class="{active : isActive(el.href)}")
-            a(ng-href="{{ el.href }}", title="el.title", ng-bind="el.title")
-          li(class="divider")	
-        ul.right
-          li(class="divider")
-          li(ng-repeat="el in menuRight", ng-class="{active : isActive(el.href)}")
-            a(ng-href="{{ el.href }}", title="el.title", ng-bind="el.title")
-          li(class="divider")	
+      feedback() 
+      
+      ng-view
 
-    ng-view
-
-    script
-      var _gaq=[["_setAccount","#{ga_id}"],["_trackPageview"]];
-      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
-      g.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";
-      s.parentNode.insertBefore(g,s)}(document,"script"));
+      script
+        var _gaq=[["_setAccount","#{ga_id}"],["_trackPageview"]];
+        (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
+        g.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";
+        s.parentNode.insertBefore(g,s)}(document,"script"));

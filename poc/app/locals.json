@@ -10,8 +10,10 @@
     "img": "img/xx.png"
   },
   "scripts": [
-    "//cdnjs.cloudflare.com/ajax/libs/dropbox.js/0.9.2/dropbox.min.js",
+    "lib/dropbox.min.js",
     "lib/angular.min.js",
+    "lib/jsonml-xml.js",
+    "js/jcss.js",
     "lib/angular-resource.min.js",
     "lib/angular-mobile.min.js",
     "lib/moment.min.js",
@@ -19,6 +21,7 @@
     "lib/js-yaml.min.js",
     "js/yaml-front.js",
     "js/routes.js",
+    "js/services/dropbox.js",
     "js/filters.js",
     "js/directives/foundation_directives.js",
     "js/controllers/main_controller.js"
