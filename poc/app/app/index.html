@@ -1,4 +1,135 @@
-<!DOCTYPE html><html lang="en" x-ng-app="DCMS"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1,user-scalable=no"><meta name="handheldFriendly" content="true"><meta name="MobileOptimized" content="480"><meta name="apple-mobile-web-app-capable" content="true"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta http-equiv="cleartype" content="on"><meta name="description" content="dcms"><meta name="author" content="strzelewicz.alexandre@gmail.com &lt;apps.hemca.com&gt;"><meta property="og:site_name" content="http://an.url.com"><meta property="og:type" content="website"><meta property="og:image" content="img/xx.png"><meta property="og:description" content="dcms"><meta property="fb:app_id" content="xxx"><title>DCMS</title><script src="lib/dropbox.min.js"></script><script src="lib/angular.min.js"></script><script src="lib/jsonml-xml.js"></script><script src="js/jcss.js"></script><script src="lib/angular-resource.min.js"></script><script src="lib/angular-mobile.min.js"></script><script src="lib/moment.min.js"></script><script src="lib/modernizr.min.js"></script><script src="lib/js-yaml.min.js"></script><script src="js/yaml-front.js"></script><script src="js/routes.js"></script><script src="js/services/dropbox.js"></script><script src="js/filters.js"></script><script src="js/directives/foundation_directives.js"></script><script src="js/controllers/main_controller.js"></script><link rel="stylesheet" href="css/foundation/app.css"><link rel="stylesheet" href="css/main.css"><link rel="stylesheet" href="css/font/font-awesome.css"><body><div class="contain-to-grid"><nav ng-controller="NavbarCtrl" class="top-bar"><ul class="title-area"><li class="name"><h1><a href="/#/" title="Home">DCMS</a></h1></li></ul><section class="top-bar-section"><ul class="left"><li class="divider"></li><li ng-repeat="el in menuLeft" ng-class="{active : isActive(el.href)}"><a ng-href="{{ el.href }}" title="el.title" ng-bind="el.title"></a></li><li class="divider">	</li></ul><ul class="right"><li class="divider"></li><li ng-repeat="el in menuRight" ng-class="{active : isActive(el.href)}"><a ng-href="{{ el.href }}" title="el.title" ng-bind="el.title"></a></li><li class="divider">	</li></ul></section></nav></div><feedback> </feedback><ng-view></ng-view><script>var _gaq=[["_setAccount","UA-xxx"],["_trackPageview"]];
-(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
-g.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";
-s.parentNode.insertBefore(g,s)}(document,"script"));</script></body></head></html>
+<!DOCTYPE html>
+<html x-ng-app="DCMS">
+  <head>
+    <title>devo.ps | Manage your infrastructure.</title>
+    
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="description" content="devo.ps allows you to manage your whole DevOps strategy, from managing your servers to deploying applications on them and automating your Operations.">
+    <meta name="viewport" content="width=device-width">
+    
+    <!-- Icons -->
+    <link rel="shortcut icon" href="/images/favicon.png">
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/images/apple-touch-icon-114x114.png">
+    
+    <!-- CSS -->
+    
+      <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans">
+    
+      <link rel="stylesheet" href="css/normalize.css">
+    
+      <link rel="stylesheet" href="css/font.css">
+    
+      <link rel="stylesheet" href="css/style.css">
+    
+      <link rel="stylesheet" href="css/angular.css">
+    
+
+    
+  </head>
+  <body ng-controller="MainCtrl">
+    <div id="app">
+      
+      <header id="header">        
+        <nav>
+          <a href="#help" class="help">Help</a>
+          <a href="#user" class="user">{{User.get().name}} <i>{{User.get().privateBytes | bytesToMb}} / {{User.get().usedQuota | bytesToMb}}</i></a>
+
+        </nav>
+        <a href="#" id="logo">focused.io</a>
+      </header>
+
+      
+      <section id="main">
+
+        <nav id="menu" ng-controller="NavbarCtrl">
+
+          <header>
+            <div id="logo">
+              <!-- LOGO -->
+            </div>
+
+            <select ng-model="Context.current_project"
+                    class="project-select"
+                    ng-options="project for project in Context.projects">
+            </select>
+
+            <div style="float : right; margin-right : 5px;">
+              <a class="settings" data-icon="a" ng-click="createNewProject()"></a>
+              <a class="settings" data-icon="s" ng-click="projectPopover = !projectPopover"></a>
+              <div class="popover popover-edit-project" ng-show="projectPopover">
+                <a ng-click="deleteProject(); projectPopover = false">Delete Project</a>
+                <a ng-click="refreshProject(); projectPopover = false">Force Refresh</a>
+              </div>
+            </div>
+                        
+          </header>
+          
+          <a href="/#/" class="apps" ng-class="{active : isActive('#/')}" data-icon="A">Posts</a>
+          <a href="/#/medias" class="servers" ng-class="{active : isActive('#/medias')}" data-icon="S">Media</a>
+          <a href="/#/types" class="settings" data-icon="s" ng-class="{active : isActive('#/types')}">Types</a>
+        </nav>
+
+        <ng-view></ng-view>
+        
+                
+      </section>
+    </div>
+
+    <section id="messages">
+      <feedback></feedback>
+    </section>
+
+    <!-- JS -->
+    
+      <script src="lib/html5.js"></script>
+    
+      <script src="lib/spin.min.js"></script>
+    
+      <script src="lib/jquery-2.0.2.min.js"></script>
+    
+      <script src="lib/dropbox.min.js"></script>
+    
+      <script src="lib/angular.min.js"></script>
+    
+      <script src="lib/jsonml-xml.js"></script>
+    
+      <script src="js/jcss.js"></script>
+    
+      <script src="lib/angular-resource.min.js"></script>
+    
+      <script src="lib/angular-mobile.min.js"></script>
+    
+      <script src="lib/moment.min.js"></script>
+    
+      <script src="lib/modernizr.min.js"></script>
+    
+      <script src="lib/js-yaml.min.js"></script>
+    
+      <script src="lib/angular-ui-router.min.js"></script>
+    
+      <script src="js/yaml-front.js"></script>
+    
+      <script src="js/routes.js"></script>
+    
+      <script src="js/services/Context.js"></script>
+    
+      <script src="js/services/Feedback.js"></script>
+    
+      <script src="js/services/dropbox.js"></script>
+    
+      <script src="js/services/localStorageModule.js"></script>
+    
+      <script src="js/factories/User.js"></script>
+    
+      <script src="js/filters.js"></script>
+    
+      <script src="js/directives/foundation_directives.js"></script>
+    
+      <script src="js/controllers/main_controller.js"></script>
+    
+    
+  </body>
+</html>

@@ -24,7 +24,7 @@ DropboxWrapper.run(function() {
  
  * @description dropbox module
  */
-DropboxWrapper.service('Dropbox', ['$q', function($q) {
+DropboxWrapper.service('Dropbox', ['$q', '$log', function($q, $log) {
 
   var self = this;
   
@@ -42,7 +42,7 @@ DropboxWrapper.service('Dropbox', ['$q', function($q) {
    * @description auth user
    */
   this.isAuth = function(cb) {
-    client.authenticate({interactive: false}, function(err, client) {
+    client.authenticate({ interactive: false }, function(err, client) {
       if (err) return alert(err);
 
       if (client.isAuthenticated()) {
@@ -92,6 +92,57 @@ DropboxWrapper.service('Dropbox', ['$q', function($q) {
     });
   };
 
+  this.getAllContents = function(project_name, cb) {
+    var self          = this;
+    var dt            = {};
+    var bulk_content  = [];
+    
+    this.getTypes(project_name, function(err, types) {
+
+      // !!! TODO
+      // To change by async for parallel queries
+      // !!! TODO
+      (function ex(types) {
+        if (types[0] == null) return cb(null, dt, bulk_content);
+        Orion.emit('loading', 'Fetching contents /' + project_name + '/' + types[0]);
+        self.getContentForType(project_name, types[0], function(err, cnts, schema) {
+          
+          dt[types[0]] = {
+            name     : types[0],
+            schema   : schema,
+            contents : cnts
+          };
+
+          (function ex2(cnts) {
+            if (cnts[0] == null) { types.shift(); return ex(types); }
+
+            Orion.emit('loading', 'Fetching ' + project_name + '/' + types[0] + '/' + cnts[0]);
+            
+            self.getContent(project_name, types[0], cnts[0], function(err, yaml) {
+
+              $log.log('Fetched');
+              bulk_content.push({
+                meta : {
+                  filename  : cnts[0],
+                  schema    : schema,
+                  type      : types[0]
+                },
+                data : jsYaml.convert(yaml)
+              });
+
+              cnts.shift();
+              return ex2(cnts);
+            });
+            return false;
+          })(cnts);
+          
+        });
+        return false;
+      })(types);
+      
+    });
+  };
+  
   /**
    * @method getContentForType
    * @description get content listing and schema for 
@@ -103,7 +154,7 @@ DropboxWrapper.service('Dropbox', ['$q', function($q) {
     
     client.readdir(content_path, function(err, contents) {
       if (err) { console.error(err); return cb(err); }
-
+      
       client.readFile(schema_path, function(err, schema) {
         if (err) { console.error(err); return cb(err); }
         
@@ -158,7 +209,7 @@ DropboxWrapper.service('Dropbox', ['$q', function($q) {
    * @method getContents
    * @description get content for a specified project
    */
-  this.getContents = function(project_name, cb) {
+  this.getTypes = function(project_name, cb) {
     client.readdir(project_name + '/content', function(err, dt) {
       if (err) return cb(err, null);
       return cb(null, dt);
@@ -170,7 +221,7 @@ DropboxWrapper.service('Dropbox', ['$q', function($q) {
    * @description create a new content type
    */
   this.createNewContentType = function(project_name, type_description, cb) {
-    var content_type_name = type_description.title;
+    var content_type_name = type_description.name;
 
     // Create folder in content
     client.mkdir(project_name + '/content/' + content_type_name, function(err, dt) {
@@ -179,7 +230,7 @@ DropboxWrapper.service('Dropbox', ['$q', function($q) {
       var filename = content_type_name.concat('.json');
       // Create schemca in settings
       client.writeFile(project_name + '/settings/' + filename,
-                       angular.toJson(angular.fromJson(type_description)), function(err, stat) {
+                       angular.toJson(angular.fromJson(type_description.schema)), function(err, stat) {
         if (err) { console.error(err); return cb(err); }
         return cb(null, stat);
       });
@@ -187,6 +238,17 @@ DropboxWrapper.service('Dropbox', ['$q', function($q) {
     });
   };
 
+  this.updateContentType = function(project_name, type_description, cb) {
+    var content_type_name = type_description.name;
+    var filename = content_type_name.concat('.json');
+    // Create schemca in settings
+    client.writeFile(project_name + '/settings/' + filename,
+                     angular.toJson(angular.fromJson(type_description.schema)), function(err, stat) {
+                       if (err) { console.error(err); return cb(err); }
+                       return cb(null, stat);
+                     });
+  };
+  
   /**
    * @method createProject
    * @description create new project folder

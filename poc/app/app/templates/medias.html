@@ -1,0 +1,40 @@
+
+<div id="content">
+  <div id="pane">
+    
+    <header>
+      <div class="actions">
+        <a href="#add" class="add button" data-icon="a"></a>
+      </div>
+      <input type="text" name="search" placeholder="Filter by name" ng-model="fts">
+    </header>
+    
+    <nav>
+      <a href="#" ng-repeat="content in Context.bulk_medias | filter:fts" ng-click="editMode(content)">
+        <h2>{{content.meta.filename}}</h2>
+        <small class="description"><b>Type</b> {{content.meta.type}}</small>
+      </a>
+    </nav>
+  </div>
+
+
+  <div id="details" class="empty" ng-show="Context.current_media == null">
+    <div class="centerize">
+      Select a media
+    </div>
+  </div>
+
+  <div id="details" ng-show="Context.current_media != null">
+    <header>
+      <div class="actions bundle">
+        <a href="#lock" class="button status active" data-icon="o">Enabled</a>
+        <a href="#lock" class="button lock" data-icon="l">Locked</a>
+      </div>
+      <h1>{{Context.current_content.title}}</h1>
+    </header>
+    <section id="body">
+
+    </section>
+  </div>
+</div>
+

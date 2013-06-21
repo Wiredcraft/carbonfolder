@@ -2,33 +2,107 @@
 var MCtrl = angular.module('MainController', []);
 
 MCtrl.controller('NavbarCtrl', ['$scope', '$route', '$location', function($scope, $route, $location) {
-
-  $scope.menuLeft = [];
-  $scope.menuRight = [];
-
-  for (key in $route.routes) {
-    var route = $route.routes[key];
-
-    if (angular.isDefined(route.menu)) {
-      if (angular.isDefined(route.menu.right) && route.menu.right)  {
-	$scope.menuRight.push({
-	  title : route.menu.title,
-	  href : '#' + key
-	});
-      }
-      else {
-	$scope.menuLeft.push({
-	  title : route.menu.title,
-	  href : '#' + key
-	});
-      }
-    }
-  }
-
-  $scope.isActive = function(path) { return path.substring(1) == $location.path()};
+  $scope.isActive = function(path) { return path.substring(1) == $location.path() };
 }]);
 
 MCtrl.controller('NopCtrl', [function() {}]);
+
+/**
+ * @doc controller
+ * @id MCtrl:MainCtrl
+ * @view global
+ * @description controller which encapsulates everything
+ * @author Alexandre Strzelewicz <as@unitech.io>
+ */
+MCtrl.controller('MainCtrl', ['$scope', '$rootScope', 'User', 'Dropbox', 'Context', 'localStorageService', function($scope, $rootScope, User, Dropbox, Context, localStorageService) {
+  
+  $rootScope.User = User;
+  $rootScope.Context = Context;
+
+  Orion.emit('loading', 'Loading projects');
+
+  // Get project once the user is logged
+  $scope.$on('user:logged', function() {    
+    Context.refreshProjects(function(err) {
+      Orion.emit('end', 'Projects loaded');
+      $scope.$apply();
+    });    
+  });
+
+  $scope.refreshProject = function() {
+    Context.refreshProjectContext(Context.current_project, true, function() {
+      $rootScope.$apply();
+    });
+  };
+
+  // $scope.objectLength = function(object) {
+  //   console.log(object);
+  //   if (!object) return 0;
+  //   return Object.keys(object).length;
+  // };
+  
+  $scope.deleteProject = function() {
+    Orion.emit('loading', 'Project ' + Context.current_project + ' being deleted');
+    
+    Dropbox.deleteProject(Context.current_project, function(err) {
+      if (err) alert(err);
+      Orion.emit('end', 'Project ' + Context.current_project + ' has been deleted');
+      
+      Context.refreshProjects(function(err) {
+        Orion.emit('info', 'Projects refreshed');
+        $scope.$apply();
+      });
+    });
+  };
+  
+  $scope.createNewProject = function() {
+    var project_name = window.prompt("Name of the project","");
+
+    Orion.emit('loading', 'Creating project');
+    
+    Dropbox.createProject(project_name, function(err, dt) {
+      if (!err) {
+        Orion.emit('end', 'Project ' + project_name + ' successfully inited');
+        
+        Context.refreshProjects(function(err) {
+          Orion.emit('end', 'Projects refreshed');
+          
+          $scope.$apply();
+        });
+      }
+      else
+        Orion.emit('error', 'Projects refreshed');
+    });
+  };
+
+  // When other project selected
+  // populate Context with types
+  $scope.$watch('Context.current_project', function(aft, bef) {
+    if (bef == aft) return;
+
+    Context.refreshProjectContext(aft, function(err) {
+      $rootScope.$apply();
+    });
+
+  });
+  
+}]);
+
+/**
+ * @doc controller
+ * @id MCtrl:LoginCtrl
+ * @view login.ejs
+ * @description Dropbox Login page 
+ * @author Alexandre Strzelewicz <as@unitech.io>
+ */
+MCtrl.controller('LoginCtrl', ['$scope', 'Dropbox', 'User', function($scope, Dropbox, User) {
+  $scope.authUser = function() {
+    Dropbox.auth(function(err, user) {
+      User.set(user);
+    });
+  };
+}]);
+
 
 /**
  * @doc controller
@@ -37,151 +111,43 @@ MCtrl.controller('NopCtrl', [function() {}]);
  * @description 
  * @author Alexandre Strzelewicz <as@unitech.io>
  */
-MCtrl.controller('ProjectCtrl', ['$scope', '$location', 'User', 'Dropbox', 'FeedVar', function($scope, $location, User, Dropbox, FeedVar) {
-  if (!User.isLogged())
-    return $location.path('/');
-
-  FeedVar.setMessage('Loading projects...');
-
-  function get_proj() {
-    Dropbox.getProjects(function(err, dt) {
-      $scope.projects = dt;
-      FeedVar.setMessage('Projects loaded');
-      $scope.$apply();
-    });
-  };
-  get_proj();
-
-  $scope.deleteProject = function(project_name) {
-    FeedVar.setMessage('Project ' + project_name + ' being deleted');
-    Dropbox.deleteProject(project_name, function(err) {
-      if (err) alert(err);
-      FeedVar.setMessage('Project ' + project_name + ' has been deleted');
-      get_proj();
-    });
+MCtrl.controller('ProjectCtrl', ['$scope', '$location', 'User', 'Dropbox', 'Context', function($scope, $location, User, Dropbox, Context) {
+  $scope.Context          = Context;
+  Context.current_content = null;
+  
+  function baseType(content_type) {
+    Context.current_content               = {};
+    Context.current_content.meta          = {};    
+    Context.current_content.meta.filename = 'New content';
+    Context.current_content.meta.schema   = content_type.schema;
+    Context.current_content.meta.type     = content_type.name;
+    Context.current_content.data          = {};
+    $scope.addPopover                     = false;
   };
   
-  $scope.createNewProject = function() {
-    var project_name = window.prompt("Name of the project","");
-    FeedVar.setMessage('Creating new project');
-    Dropbox.createProject(project_name, function(err, dt) {
-      if (!err) {
-        FeedVar.setMessage('Project ' + project_name + ' successfully inited');
-        get_proj();
-      }
-      else
-        FeedVar.setMessage('Error ' + err);
-    });
+  $scope.add = baseType;
+  
+  $scope.editMode = function(content) {   
+    Context.current_content = content;
   };
-  return false;
-}]);
-
-/**
- * @doc controller
- * @id MCtrl:HomeCtrl
- * 
- * @description Main controller
- * @author Alexandre Strzelewicz
- */
-MCtrl.controller('HomeCtrl', ['$scope', '$location', 'User', 'Dropbox', function($scope, $location, User, Dropbox) {
-  $scope.User = User;
-
-  Dropbox.isAuth(function(err, user) {
-    if (user) {
-      User.set(user);
-      $location.path('/projects');
-      $scope.$apply();
-    }
-  });
   
-  $scope.authUser = function() {
-    Dropbox.auth(function(err, user) {
-      $location.path('/projects/');
-      User.set(user);
-    });
-  };  
-}]);
+  $scope.submit = function() {
+    var yaml_content = jsYaml.jsonToYaml(Context.current_content.data);
 
-/**
- * @doc controller
- * @id MCtrl:EditCtrl
- * 
- * @description Controller for edition page
- * @author Alexandre Strzelewicz <as@unitech.io>
- */
-MCtrl.controller('EditCtrl', ['$scope', '$location', '$routeParams', 'User', 'Dropbox', 'FeedVar', function($scope, $location, $routeParams, User, Dropbox, FeedVar) {
-  var project_name;
-  
-  $scope.project_name = project_name = $routeParams['project_name'];
-  $scope.data = {};
-  FeedVar.setMessage('Loading project ' + $scope.project_name);
-
-  Dropbox.getContents($scope.project_name, function(err, dt) {
-    FeedVar.setMessage('Contents loaded');
-    $scope.contents = dt;
-    $scope.$apply();
-  });
-
-  function main_update(content_type) {
-    FeedVar.setMessage('Loading contents');
-    $scope.edit_mode = false;
-
-    $scope.content_schema   = {};
-    $scope.current_contents = {};
-    $scope.current_type     = null;
+    Orion.emit('loading', 'Creating file');
     
-    Dropbox.getContentForType(project_name, content_type, function(err, cnts, schema) {
-      FeedVar.setMessage('Content loaded');
-      
-      $scope.content_schema   = schema;
-      $scope.current_type     = content_type;
-      $scope.current_contents = cnts;
-      $scope.$apply();
-    });
-  }
-
-  if ($location.search().content)
-    main_update($location.search().content);
-    
-  //
-  // View functions
-  //
-  $scope.editContentType = function(content_type) {
-    $location.search('content', content_type);
-    main_update(content_type);
-  };
-  
-  $scope.prepareNewContent = function(filename) {
-    $scope.edit_mode = true;
-    if (filename) {
-      Dropbox.getContent(project_name,
-                         $scope.current_type,
-                         filename,
-                         function(err, dt) {
-                           $scope.edit_mode = true;
-                           $scope.data = jsYaml.convert(dt);
-                           $scope.filename = filename;
-                         });
-    }
-  };
-
-  $scope.createNewContent = function() {
-    var filename = $scope.filename.indexOf('.yaml') >= 0 ? $scope.filename : $scope.filename + '.yaml';
-    
-    Dropbox.createFileForProject(project_name,
-                                 $scope.current_type,
-                                 filename,
-                                 jsYaml.jsonToYaml($scope.data), function(err, dt) {
-                                   main_update($scope.current_type);
-                                   $scope.data = {};
+    Dropbox.createFileForProject(Context.current_project,
+                                 Context.current_content.meta.type,
+                                 Context.current_content.meta.filename,
+                                 yaml_content, function(err, dt) {                                   
+                                   if (err) alert(err);
+                                   Orion.emit('end', 'File created/updated');
+                                   Context.refreshProjectContext(Context.current_project, true, function() {
+                                     $scope.$apply();
+                                   });
                                  });
   };
-  
-  $scope.createNewContentType = function() {
-    $location.path('/project/' + $scope.project_name + '/new_type');
-  };
-  
-  return false;
+
 }]);
 
 /**
@@ -191,187 +157,87 @@ MCtrl.controller('EditCtrl', ['$scope', '$location', '$routeParams', 'User', 'Dr
  * @description controller for type creation
  * @author Alexandre Strzelewicz <as@unitech.io>
  */
-MCtrl.controller('NewTypeCtrl', ['$scope', '$location', '$routeParams', 'User', 'Dropbox', function($scope, $location, $routeParams, User, Dropbox) {
-  // if (!User.isLogged())
-  //   return $location.path('/');
+MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', function($scope, User, Dropbox, Context) {
   
-  $scope.project_name    = $routeParams['project_name'];
+  $scope.Context = Context;
 
-  $scope.type            = {};
-  $scope.type.properties = {};
+  $scope.add = function() {
+    Context.current_type = {};
+    Context.current_type.name = 'New type';
+  };
+  
+  $scope.editMode = function(type) {
+    Context.current_type = type;
+  };
+
+}]);
+
+/**
+ * @doc controller
+ * @id MCtrl:NewTypeCtrl
+ * 
+ * @description controller for type creation
+ * @author Alexandre Strzelewicz <as@unitech.io>
+ */
+MCtrl.controller('TypesCtrl', ['$scope', 'User', 'Dropbox', 'Context', function($scope, User, Dropbox, Context) {
+  
+  $scope.Context       = Context;
+  Context.current_type = null;
+  
+  function baseType() {
+    Context.current_type                   = {};
+    Context.current_type.isNew             = true;
+    Context.current_type.name              = 'New type';
+    Context.current_type.schema            = {};
+    Context.current_type.schema.properties = {};
+  };
+  
+  $scope.add = baseType;
+
+  //baseType();
+
+  $scope.keyNumbers = function(object) { return Object.keys(object).length; };
+  
+  $scope.editMode = function(type) {
+    Context.current_type = type;
+  };
 
   $scope.types_available = ['text', 'content', 'date'];
+
+  // Temp type when adding field
   $scope.ntype           = {};
   $scope.ntype.type      = $scope.types_available[0];
-  
-  $scope.appendType = function() {
-    $scope.type.properties[$scope.ntype.title] = angular.copy($scope.ntype);
-    $scope.ntype = null;
+    
+  $scope.appendField = function() {
+    Context.current_type.schema.properties[$scope.ntype.title] = angular.copy($scope.ntype);
+    $scope.ntype.title = '';
   };
 
+  $scope.deleteField = function(field) {
+    delete Context.current_type.schema.properties[field.title];
+  };
+  
   $scope.createNewContentType = function() {
-    Dropbox.createNewContentType($scope.project_name, $scope.type, function(err, dt) {
-      if (err) return alert(err);
-      $location.path('/project/' + $scope.project_name).search('content', $scope.type.title);
-      return $scope.$apply();
-    });
-  };
-}]);
+    Orion.emit('loading', 'Creating/Updating content type');
 
-/**
- * @doc service
- * @id MCtrl:User
- * 
- * @description 
- * @author Alexandre Strzelewicz <as@unitech.io>
- */
-MCtrl.factory('User', [function() {
-  var User = {};
-
-  var user = false;
-  
-  User.set = function(us) {
-    user = us;
-  };
-
-  User.isLogged = function() {
-    return user;
-  };
-  return User;
-}]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* global angular */
-
-/**
- * @doc module
- * @id Feedback
- * @description Feedback
- *
- * @author Alexandre Strzelewicz <as@unitech.io>
- */
-
-var Feedback = angular.module('Feedback', []);
-
-Feedback.constant('version', '0.1');
-
-/**
- * @doc module
- * @id Mctrl:serviceName
- 
- * @description 
- */
-Feedback.service('FeedVar', ['$http', function($http) {
-  /**
-   * @method setMessage
-   * @description 
-   */
-  this.setMessage = function(level, msg) {
-    if (msg === undefined) {
-      msg = level;
-      level = 'info';
-    }
-    
-    this.msg = { level : level,
-                 msg : msg };    
-  };
-
-  this.getMessage = function() {
-    return this.msg;
-  };
-}]);
-
-/**
- * @doc directive
- * @id Feedback:feedback
- * 
- * @description set a message at top
- * @author Alexandre Strzelewicz <as@unitech.io>
- */
-Feedback.directive('feedback', ['FeedVar', function(FeedVar) {
-
-  var css = {
-    '#feedback-popup' : {
-      'position' : 'fixed',
-      'bottom' : '0px',
-      'left' : '0px',
-      'height' : '30px',
-      'width' : '200px',
-      'background' : '#303030',
-      'h3' : {
-        'color' : 'white',
-        'font-size' : '12px',
-        'text-align' : 'center'
-      }
+    if (Context.current_type.isNew == true) {
+      Dropbox.createNewContentType(Context.current_project, Context.current_type, function(err, dt) {
+        if (err) return alert(err);
+        Context.refreshProjectContext(Context.current_project, true, function() {
+          $scope.$apply();
+        });
+        Orion.emit('end', 'Created');
+        return $scope.$apply();
+      });
+    } else {
+      Dropbox.updateContentType(Context.current_project, Context.current_type, function(err, dt) {
+        if (err) return alert(err);
+        Context.refreshProjectContext(Context.current_project, true, function() {
+          $scope.$apply();
+        });
+        Orion.emit('end', 'Updated');
+        return $scope.$apply();
+      });
     }
   };
-
-  
-  var feedback = {
-    restrict : 'E',
-    replace : true,
-    template : '<div id="feedback-popup" class="{{message.level}}" ng-show="message.msg.length > 0">' +
-      '<h3>{{message.msg}}</h3>' +
-      '</div>'
-  };
-
-  var timeout;
-  
-  feedback.controller = ['$scope', function($scope, el, attrs) {
-
-    $scope.$watch(function() {
-      return FeedVar.getMessage();
-    }, function(aft, bef) {
-      if (aft == bef) return;
-      
-      clearTimeout(timeout);
-      $scope.message = aft;
-
-      Jss.apply(css);
-      
-      timeout = setTimeout(function() {
-        $scope.message = '';
-        $scope.$apply();
-      }, 3000);
-    });
-    
-    // console.log(JSON.stringify(css)
-    //             .replace(/"/g, '')
-    //             .replace(/,/g, ';\n'));
-    // var input =
-    //       ['div',{ id: 'feedback-group', class: '{{message.level}}' },
-    //        ['h3', '{{message.msg}}']           
-    //       ];
-    // var actual = JsonML.toXMLText(input);
-    // console.log(actual);
-    
-    Jss.apply(css);
-  }];
-  
-  feedback.link = function(scope, el, attrs) {
-  };
-  
-  return feedback;
 }]);

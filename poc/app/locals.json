@@ -1,7 +1,7 @@
 {
-  "title": "DCMS",
+  "title": "devo.ps | Manage your infrastructure.",
   "url": "http://an.url.com",
-  "description": "dcms",
+  "description": "devo.ps allows you to manage your whole DevOps strategy, from managing your servers to deploying applications on them and automating your Operations.",
   "author": "strzelewicz.alexandre@gmail.com <apps.hemca.com>",
   "ga_id" : "UA-xxx",
   "fb": {
@@ -10,6 +10,9 @@
     "img": "img/xx.png"
   },
   "scripts": [
+    "lib/html5.js",
+    "lib/spin.min.js",
+    "lib/jquery-2.0.2.min.js",
     "lib/dropbox.min.js",
     "lib/angular.min.js",
     "lib/jsonml-xml.js",
@@ -19,16 +22,23 @@
     "lib/moment.min.js",
     "lib/modernizr.min.js",
     "lib/js-yaml.min.js",
+    "lib/angular-ui-router.min.js",
     "js/yaml-front.js",
     "js/routes.js",
+    "js/services/Context.js",
+    "js/services/Feedback.js",
     "js/services/dropbox.js",
+    "js/services/localStorageModule.js",
+    "js/factories/User.js",
     "js/filters.js",
     "js/directives/foundation_directives.js",
     "js/controllers/main_controller.js"
   ],
   "css": [
-    "css/foundation/app.css",
-    "css/main.css",
-    "css/font/font-awesome.css"
+    "http://fonts.googleapis.com/css?family=Open+Sans",
+    "css/normalize.css",
+    "css/font.css",
+    "css/style.css",
+    "css/angular.css"
   ]
 }

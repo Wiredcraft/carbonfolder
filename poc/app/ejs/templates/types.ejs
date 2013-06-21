@@ -1,0 +1,92 @@
+
+<div id="content">
+  <div id="pane">
+    
+    <header>
+      <div class="actions">
+        <a class="add button" data-icon="a" ng-click="add()"></a>
+      </div>
+      <input type="text" name="search" placeholder="Filter by name">
+    </header>
+    
+    <nav>
+      <a ng-repeat="(key, content) in Context.types"
+         ng-click="editMode(content)"
+         ng-class="{active : Context.current_type.name == content.name}">
+        <h2>{{content.name}}</h2>
+        <small class="description"><b>Field numbers</b> {{keyNumbers(content.schema.properties)}}</small>
+      </a>
+      <!-- Informations -->
+      <div ng-show="(Context.types | objectLength) == 0">
+        You haven't created any type<br/>
+        <a class="add button" data-icon="a" ng-click="add()"></a>
+      </div>
+      <!-- ! Informations -->
+    </nav>
+  </div>
+
+  <div id="details" class="empty" ng-show="Context.current_type == null">
+    <div class="centerize">
+      Select a content
+    </div>
+  </div>
+  
+  <div id="details" ng-show="Context.current_type != null">
+    <header>
+      <div class="actions bundle">
+        <a href="#lock" class="button status active" data-icon="o">Enabled</a>
+        <a href="#lock" class="button lock" data-icon="l">Locked</a>
+      </div>
+      <h1>{{Context.current_type.name}}</h1>
+    </header>
+    <section id="body">
+      <section class="overview">
+
+        <div class="field">
+          <label>Type name</label>
+          <input type="text" ng-model="Context.current_type.name"/>
+        </div>
+        <hr>
+        
+        <h2>Add field</h2>
+        <form ng-submit="appendField()">
+          <div class="field">
+            <label>Field title</label>
+            <input type="text" ng-model="ntype.title"/>
+          </div>
+          <div class="field">
+            <label>Type</label>        
+            <select ng-options="type for type in types_available",
+                    ng-model="ntype.type">
+            </select>
+          </div>
+          <input type="submit" class="button" value="Add">
+        </form>
+        <br/>
+
+        <hr>
+        <h2>Form preview</h2>
+        
+        <section class="meta">
+          <form>
+            <div class="field" ng-repeat="(key, field) in Context.current_type.schema.properties">
+              <a class="add button" data-icon="d" ng-click="deleteField(field)"></a>
+              <label for="{{key}}">{{key}}</label>
+              <input name="{{key}}" type="{{field.type}}"/>
+            </div>
+          </form>
+        </section>
+
+        <hr/>
+        
+        <a class="button" ng-click="createNewContentType()">Submit type</a>
+       
+        
+        <!-- <pre>{{Context.current_type.schema|beautifyJson}}</pre> -->
+        <!-- <pre ng-hide="Context.current_type.schema">{{type|beautifyJson}}</pre> -->
+        
+      </section>
+    </section>
+  </div>
+</div>
+

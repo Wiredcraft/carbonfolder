@@ -23,13 +23,16 @@
   "scripts": {
     "test": "mocha"
   },
-  "dependencies": {},
+  "dependencies": {
+    "ejs" : "*"
+  },
   "devDependencies": {
     "grunt-contrib-watch": "*",
     "grunt-contrib-compass": "*",
     "grunt-contrib-connect": "*",
     "grunt-jade": "*",
-    "grunt-notify": "*"
+    "grunt-notify": "*",
+    "grunt-template-html" : "*"
   },
   "keywords": []
 }
