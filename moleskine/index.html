@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>A Light weight RTE jQuery Plugin</title>
+    <link rel="stylesheet" href="css/jquery.rte.css" />
+  </head>
+  <body>
+    
+    <textarea name="form[info1]"   class="rte1" method="post" action="#">
+    </textarea>
+
+    <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery.rte.js"></script>
+    <script type="text/javascript" src="js/reMarked.js"></script>
+    <script type="text/javascript" src="js/showdown.js"></script>
+    <script type="text/javascript" src="js/jquery.rte.tb.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+      arr = $('.rte1').rte({
+      width         : 800,
+      height        : 500,
+      controls_rte  : rte_toolbar,
+      controls_html : html_toolbar,
+      controls_md   : md_toolbar
+      });
+      
+      });
+    </script>
+    
+  </body>
+</html>
