@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>devo.ps | Manage your infrastructure.</title>
+  
+  <!-- Meta -->
+  <meta charset='utf-8'>
+  <meta name='description' content='devo.ps allows you to manage your whole DevOps strategy, from managing your servers to deploying applications on them and automating your Operations.'>
+  <meta name='viewport' content='width=device-width'>
+  
+  <!-- Icons -->
+  <link rel='shortcut icon' href='/images/favicon.ico'>
+  <link rel='apple-touch-icon' href='/images/apple-touch-icon.png'>
+  <link rel='apple-touch-icon' sizes='72x72' href='/images/apple-touch-icon-72x72.png'>
+  <link rel='apple-touch-icon' sizes='114x114' href='/images/apple-touch-icon-114x114.png'>
+  
+  <!-- CSS -->
+  <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Open+Sans'>
+  <link rel='stylesheet' href='./css/normalize.css'>
+  <link rel='stylesheet' href='./css/font.css'>
+  <link rel='stylesheet' href='./css/style.css'>
+</head>
+<body class='anonymous'>
+  <div id='wrapper'>
+    <a href='#' id='logo'></a>
+    
+    <section id='login'>
+      <header>
+        <h1>Log-in your devo.ps account</h1>
+      </header>
+
+      <form method="POST" action="/login">
+        <div class='field email'>
+          <label for="email">Email</label>
+          <input type="text" value="sdf@dsf.com" name="email" id="email" placeholder="Email" />
+        </div>
+        <div class='field password'>
+          <label for="password">Password</label>
+          <input type="password" value="" name="password" id="password" placeholder="Password" />
+        </div>
+        <div class='field controls'>
+          <a href='./index.html' class='primary button'>Log in</a>
+        </div>
+      </form>
+      
+      <section id='messages'>
+        <div class='error loading'>Wrong email or password. <a href='#password'>Forgot your password? Retrieve it.</a></div>
+      </section>
+    </section>
+    
+    <section id='help'>
+      <nav>
+        <a href='#help'>Lost password?</a>
+        <a href='#help'>Help</a>
+        <a href='#help'>About</a>
+        <a href='#signup'>Sign up</a>
+      </nav>
+    </section>
+  </div>
+  
+  <!-- JS -->
+  <script src='js/html5.js'></script>
+  <script src='./js/spin.min.js'></script>
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' type='text/javascript'></script>
+  <script>
+ 	  $(function(){
+      // Messages animation
+      $('#messages .error').hide();
+ 	    $('#sidebar > a').click(function () {
+        $('#messages > div').animate(
+          {
+            'height': 'toggle',
+            'opacity': 'toggle'
+          },
+          'fast'
+        );
+      });
+    
+      // Popup
+ 	    $(function(){
+        $('#modal').hide();
+ 	      $('#pane a').click(function () {
+          $('body').addClass('modal');
+          $('#modal').fadeIn();
+ 	      });
+ 	      
+ 	      $('#modal .actions a').click(function () {
+          $('#modal').fadeOut();
+          $('body').removeClass('modal');
+ 	      });
+      });
+    });
+    
+    /// Spinning wheel
+    var opts = {
+      lines: 11,
+      length: 2,
+      width: 2,
+      radius: 4,
+      corners: 1,
+      rotate: 0,
+      color: '#fff'
+    };
+
+    $.fn.spin = function(opts) {
+      this.each(function() {
+        var $this = $(this),
+            data = $this.data();
+
+        if (data.spinner) {
+          data.spinner.stop();
+          delete data.spinner;
+        }
+        if (opts !== false) {
+          data.spinner = new Spinner($.extend({color: $this.css('color')}, opts)).spin(this);
+        }
+      });
+      return this;
+    };
+    
+    // var target = $('#messages');
+    var extra = $('<span class=\'extra\'></span>');
+    $('#messages div').prepend(extra);
+    extra.spin(opts);
+  </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html x-ng-app="DCMS">
+  <head>
+    <title><%= data.title %></title>
+    
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="description" content="<%= data.description %>">
+    <meta name="viewport" content="width=device-width">
+    
+    <!-- Icons -->
+    <link rel="shortcut icon" href="/images/favicon.png">
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/images/apple-touch-icon-114x114.png">
+    
+    <!-- CSS -->
+    <% data.css.forEach(function(css) { %>
+      <link rel="stylesheet" href="<%= css %>">
+    <% }) %>
+
+    
+  </head>
+  <body ng-controller="MainCtrl">
+    <div id="app">
+      
+      <header id="header">        
+        <nav>
+          <a href="#help" class="help">Help</a>
+          <a href="#user" class="user">{{User.get().name}} <i>{{User.get().privateBytes | bytesToMb}} / {{User.get().usedQuota | bytesToMb}}</i></a>
+
+        </nav>
+        <a href="#" id="logo">focused.io</a>
+      </header>
+
+      
+      <section id="main">
+
+        <nav id="menu" ng-controller="NavbarCtrl">
+
+          <header>
+            <div id="logo">
+              <!-- LOGO -->
+            </div>
+
+            <select ng-model="Context.current_project"
+                    class="project-select"
+                    ng-options="project for project in Context.projects">
+            </select>
+
+            <div style="float : right; margin-right : 5px;">
+              <a class="settings" data-icon="a" ng-click="createNewProject()"></a>
+              <a class="settings" data-icon="s" ng-click="projectPopover = !projectPopover"></a>
+              <div class="popover popover-edit-project" ng-show="projectPopover">
+                <a ng-click="deleteProject(); projectPopover = false">Delete Project</a>
+                <a ng-click="refreshProject(); projectPopover = false">Force Refresh</a>
+              </div>
+            </div>
+                        
+          </header>
+          
+          <a href="/#/" class="apps" ng-class="{active : isActive('#/')}" data-icon="A">Posts</a>
+          <a href="/#/medias" class="servers" ng-class="{active : isActive('#/medias')}" data-icon="S">Media</a>
+          <a href="/#/types" class="settings" data-icon="s" ng-class="{active : isActive('#/types')}">Types</a>
+        </nav>
+
+        <ng-view></ng-view>
+        
+                
+      </section>
+    </div>
+
+    <section id="messages">
+      <feedback></feedback>
+    </section>
+
+    <!-- JS -->
+    <% data.scripts.forEach(function(script) { %>
+      <script src="<%= script %>"></script>
+    <% }) %>
+    
+  </body>
+</html>

@@ -1,0 +1,89 @@
+
+<div id="content">
+  <div id="pane">
+    
+    <header>
+      <div class="actions">
+        <a class="add button" data-icon="a"
+           ng-click="addPopover = !addPopover"
+           ng-class="{fontbulger : (Context.types | objectLength) != 0 && Context.bulk_contents.length == 0}"></a>
+        
+        <div class="popover popover-new-article" ng-show="addPopover">
+          <a ng-repeat="(key, dt) in Context.types"
+             ng-click="add(dt)">{{key}}</a>
+        </div>
+      </div>
+      <input type="text" name="search" placeholder="Filter by name" ng-model="fts">
+    </header>
+    
+    <nav>
+        <a ng-repeat="content in Context.bulk_contents | filter:fts"
+           ng-click="editMode(content)"
+           ng-class="{active : content.meta.filename == Context.current_content.meta.filename}"
+           ng-animate=" 'animate' ">
+          <h2>{{content.meta.filename}}</h2>
+          <small class="description"><b>Type</b> {{content.meta.type}}</small>
+        </a>
+        
+        <!-- Informations -->
+        <div ng-show="(Context.types | objectLength) == 0">
+          You haven't created any type<br/>
+          <a href="/#/types">Create one</a>
+        </div>
+        <div ng-show="(Context.types | objectLength) != 0 && Context.bulk_contents.length == 0">
+          Create a content by clicking on the top +
+        </div>
+        <!-- ! Informations -->
+    </nav>
+  </div>
+
+  <div id="details" class="empty" ng-show="Context.current_content == null">
+    <div class="centerize">
+      Select a content
+    </div>
+  </div>
+
+  
+  
+  <div id="details"
+       ng-show="Context.current_content != null"
+       data-ng-animate="'fade'">
+    <header>
+      <div class="actions bundle">
+        <a href="#lock" class="button status active" data-icon="o">Enabled</a>
+        <a href="#lock" class="button lock" data-icon="l">Locked</a>
+      </div>
+      <h1>{{Context.current_content.meta.filename}}</h1>
+    </header>
+    <section id="body">
+
+      <form>
+        <section class="meta">
+          <h2>Meta datas</h2>
+          <div class="field" ng-repeat="(key, field) in Context.current_content.meta.schema.properties">
+            <label>{{key}}</label>
+            <input type="{{field.type}}", ng-model="Context.current_content.data[key]"/>     
+          </div>
+          <div class="field">
+            <label>Filename</label>
+            <input type="text" ng-model="Context.current_content.meta.filename"/>
+          </div>
+        </section>
+        
+        <section class="content">
+          <h2>Content</h2>
+          <div class="field">
+            <!-- <textarea ng-model="Context.current_content.data['__content']"></textarea> -->
+            <moleskine bind-data="Context.current_content.data['__content']"
+                       base-content="static_content"
+                       width="550"
+                       height="450"></moleskine>
+          </div>
+          <input type="button" ng-click="submit()" value="Submit"/>
+        </section>
+      </form>
+      
+    </section>
+  </div>
+</div>
+

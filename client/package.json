@@ -1,0 +1,38 @@
+{
+  "name": "DCMS",
+  "description": "dcms",
+  "version": "0.1.0",
+  "author": {
+    "name": "Alexandre Strzelewicz",
+    "email": "strzelewicz.alexandre@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devo-ps/YFMM-Editor.git"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "undefined/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "lib/DCMS",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "ejs" : "*"
+  },
+  "devDependencies": {
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-compass": "*",
+    "grunt-contrib-connect": "*",
+    "grunt-jade": "*",
+    "grunt-notify": "*",
+    "grunt-template-html" : "*"
+  },
+  "keywords": []
+}

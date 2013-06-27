@@ -1,0 +1,20 @@
+{
+	"title": "Post",
+	"type": "object",
+	"properties": {
+		"title": {
+			"type": "string"
+		},
+		"date": {
+			"type": "string",
+			"format": "date"
+		},
+		"tags":{
+           "type": "array",
+           "items": {
+               "type": "string"
+           }
+        }
+	},
+	"required": ["title", "date"]
+}
