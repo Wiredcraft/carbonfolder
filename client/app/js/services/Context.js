@@ -63,8 +63,6 @@ Services.factory('Context', ['Dropbox', 'localStorageService', function(Dropbox,
   // Refresh one project
   // Deeprefresh force refreshing without caching
   Context.refreshProjectContext  = function(project_name, deep_refresh, cb) {
-    
-
     if (typeof cb === 'undefined') {
       cb = deep_refresh;
       deep_refresh = false;

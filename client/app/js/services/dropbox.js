@@ -106,11 +106,11 @@ DropboxWrapper.service('Dropbox', ['$q', '$log', function($q, $log) {
         if (types[0] == null) return cb(null, dt, bulk_content);
         Orion.emit('loading', 'Fetching contents /' + project_name + '/' + types[0]);
         self.getContentForType(project_name, types[0], function(err, cnts, schema) {
-          
+
           dt[types[0]] = {
             name     : types[0],
             schema   : schema,
-            contents : cnts
+            contents : []
           };
 
           (function ex2(cnts) {
@@ -119,17 +119,27 @@ DropboxWrapper.service('Dropbox', ['$q', '$log', function($q, $log) {
             Orion.emit('loading', 'Fetching ' + project_name + '/' + types[0] + '/' + cnts[0]);
             
             self.getContent(project_name, types[0], cnts[0], function(err, yaml) {
-
               $log.log('Fetched');
+
+              var data = jsYaml.convert(yaml);
+              // Fix date formating
+              if (data.date)
+                data.date = moment(data.date.toString()).format("YYYY-MM-DD");
+
+              dt[types[0]].contents.push({
+                filename  : cnts[0],
+                data : data
+              });
+              
               bulk_content.push({
                 meta : {
                   filename  : cnts[0],
                   schema    : schema,
                   type      : types[0]
                 },
-                data : jsYaml.convert(yaml)
+                data : data
               });
-
+              
               cnts.shift();
               return ex2(cnts);
             });

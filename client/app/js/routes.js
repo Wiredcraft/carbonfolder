@@ -4,7 +4,15 @@ DEBUG = false;
 if (window.location.host.indexOf('localhost') > -1)
   DEBUG = true;
 
-var DCMS = angular.module('DCMS', ['MainController', 'DropboxWrapper', 'Feedback', 'Filters', 'Services', 'User.model', 'MoleskineModule', 'LocalStorageModule']);
+var DCMS = angular.module('DCMS', ['MainController',
+                                   'DropboxWrapper',
+                                   'Feedback',
+                                   'Filters',
+                                   'Services',
+                                   'User.model',
+                                   'MoleskineModule',
+                                   'LocalStorageModule',
+                                   'PhotoshopModule']);
 
 DCMS.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $routeProvider
@@ -22,8 +30,11 @@ DCMS.config(['$routeProvider', '$locationProvider', function($routeProvider, $lo
     })
     .when('/medias', {
       templateUrl : 'templates/medias.html',
-      controller : 'MediaCtrl',
-      reloadOnSearch : false
+      controller : 'MediaCtrl'
+    })
+    .when('/pusher', {
+      templateUrl : 'templates/pusher.html',
+      controller : 'PusherCtrl'
     })
     .when('/types', {
       templateUrl : 'templates/types.html',

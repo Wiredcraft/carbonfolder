@@ -73,10 +73,12 @@
         <section class="content">
           <h2>Content</h2>
           <div class="field">
-            <!-- <textarea ng-model="Context.current_content.data['__content']"></textarea> -->
             <moleskine bind-data="Context.current_content.data['__content']"
                        base-content="static_content"
                        width="550"
+                       default-mode="html"
+                       input="markdown"
+                       output="markdown"
                        height="450"></moleskine>
           </div>
           <input type="button" ng-click="submit()" value="Submit"/>

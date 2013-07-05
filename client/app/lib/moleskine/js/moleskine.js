@@ -1,3 +1,4 @@
+
 /*
  * Lightweight RTE - jQuery Plugin, version 1.2
  * Copyright (c) 2009 Andrey Gayvoronsky - http://www.gayvoronsky.com
@@ -5,19 +6,25 @@
  * 2013 - Overidded by Alexandre Strzelewicz <as@unitech.io>
  */
 
+Moleskin = {};
+
 ;(function($, global, undefined) {
   
-  $.fn.moleskine = function(options, editors) {
+  $.fn.moleskine = function(options) {
     return new lwRTE (this, options || {});;
   };
 
   var lwRTE = function (textarea, options) {
     this.width		= options.width  || $(textarea).width() || '100%';
     this.height		= options.height || $(textarea).height() || 350;
-    this.change         = options.change || function() {};
+    this.change         = this.onChange = options.change || function() {};
     this.output         = options.output || null;
     this.input          = options.input  || null;
+    this.defaultMode    = options.defaultMode || 'html';
+    this.autoGrow       = options.autoGrow || true;
     this.mode           = 'html';
+
+    this.main_el        = textarea;
     this.iframe		= null;
     this.iframe_doc	= null;
     this.textarea	= null;
@@ -25,7 +32,7 @@
     this.range		= null;
     
     this.toolbars	= {
-      rte: '', html : ''
+      rte: '', html : '', md : ''
     };
       
     if (typeof Showdown === 'undefined')
@@ -42,7 +49,7 @@
      * @api private
      */
     this.reMarked = new reMarked({
-      link_list : false,  // render links as references, create link list as appendix
+      link_list : false,  // render links as references
       h1_setext : false,  // underline h1 headers
       h2_setext : false,  // underline h2 headers
       h_atx_suf : false,  // header suffixes (###)
@@ -72,36 +79,25 @@
       }
     };
     
-    $.extend(this.controls.rte, options.controls_rte || {});
-    $.extend(this.controls.html, options.controls_html || {});
-    $.extend(this.controls.md, options.controls_md || {});
-    $.extend(this.css, options.css || {});
+    $.extend(this.controls.rte  , MoleskinConf.rte_toolbar || {});
+    $.extend(this.controls.html , MoleskinConf.html_toolbar || {});
+    $.extend(this.controls.md   , MoleskinConf.md_toolbar || {});
 
     this.init(textarea);
   };
 
   lwRTE.prototype.init = function(textarea) {
     if (document.designMode || document.contentEditable) {
-      $(textarea).wrap($('<div></div>').addClass('rte-zone').width(this.width));		
-      $('<div class="rte-resizer rte-resize-icon"><a href="#"></a></div>').insertAfter(textarea);
+      $(textarea).wrap($('<div></div>').addClass('rte-zone').width(this.width));
+      //$('<div class="rte-resizer rte-resize-icon"><a href="#"></a></div>').insertAfter(textarea);      
+      $(textarea).parents('.rte-zone').append(this.info_el);
       
-      var resizer = new lwRTE_resizer(textarea);
-      
-      $(".rte-resizer a", $(textarea).parents('.rte-zone')).mousedown(function(e) {
-        $(document).mousemove(function(e) {
-	  return lwRTE_resizer.mousemove(resizer, e);
-        });
-
-        $(document).mouseup(function(e) {
-	  return lwRTE_resizer.mouseup(resizer, e);
-        });
-
-        return lwRTE_resizer.mousedown(resizer, e);
-      });
-
+      this.info_el = $(textarea).parent().find('rte-infos').html();
       this.textarea	= textarea;
-
+      
       this.enable_design_mode();
+      if (this.defaultMode == 'markdown')
+        this.html_to_markdown();
     }
   };
 
@@ -141,19 +137,24 @@
   /*
    * Markdown -> HTML
    */
-  lwRTE.prototype.disable_markdown = function(submit) {
+  lwRTE.prototype.markdown_to_html = function(submit) {
     var content     = $(this.textarea).val();
     var htmlContent = this.showdown.makeHtml(content);
 
     this.mode = 'html';    
     this.put_in_iframe(htmlContent);
   };
-
+  
   /*
    * HTML -> Markdown
    */
-  lwRTE.prototype.enable_markdown = function(submit) {
-    var markdown = this.reMarked.render($('body', this.iframe_doc).html());
+  lwRTE.prototype.html_to_markdown = function(submit) {
+    var markdown;
+
+    if (this.iframe_doc)
+      markdown = this.reMarked.render($('body', this.iframe_doc).html());
+    else
+      markdown = $(this.textarea).val();
     
     this.mode = 'markdown';
     this.create_textarea(markdown, this.toolbars.md, this.controls.md);
@@ -181,6 +182,7 @@
    * Send command to iframe
    */
   lwRTE.prototype.editor_cmd = function(command, args) {
+    var self = this;
     this.iframe.contentWindow.focus();
     try {
       this.iframe_doc.execCommand(command, false, args);
@@ -188,16 +190,23 @@
       console.log(e);
     }
     this.iframe.contentWindow.focus();
+    self.change(null, self.get_content());
   };
 
 
   lwRTE.prototype.create_textarea = function(content, toolbar, controls, submit) {
     var self = this;
-    
-    this.textarea = (submit) ? $('<input type="hidden" />').get(0) : $('<textarea></textarea>').width('100%').height(this.height).get(0);
+
+    this.textarea = (submit) ?
+      $('<input type="hidden" />').get(0) : $('<textarea></textarea>');
+
+    this.textarea.width(self.width).height(this.height).get(0);
     
     $(this.textarea).val(content);
     $(this.iframe).before(this.textarea);
+
+    if (self.autoGrow == true)
+      $(this.textarea).autogrow();
     
     $(this.textarea).keyup(function(event) {
       self.change(null, self.get_content());
@@ -205,6 +214,7 @@
     
     if (!toolbar)
       toolbar	= this.create_toolbar(controls);
+
     if (submit != true) {
       $(this.iframe_doc).remove(); //fix 'permission denied' bug in IE7 (jquery cache)
       $(this.iframe).remove();
@@ -220,17 +230,14 @@
   };
 
   lwRTE.prototype.activate_toolbar = function(editor, tb) {
-    var old_tb = this.get_toolbar();
-
-    if(old_tb)
-      old_tb.remove();
-
+    var old_tb = this.get_toolbar();    
+    if (old_tb) old_tb.remove();
     $(editor).before($(tb).clone(true));
   };
 
   lwRTE.prototype.update_iframe = function(content) {  
     var doc = "<html><head></head>" +
-          "<body style=' font-family : \"Helvetica Neue\",Helvetica,Arial,sans-serif'>" +
+          '<body style="font-family: \'Helvetica Neue\', Helvetica, Arial, sans-serif; padding : 0; margin : 0; overflow:hidden;">' +
           content +
           "</body></html>";
 
@@ -286,7 +293,12 @@
         self.range = self.iframe_doc.selection.createRange(); // same fix for IE as above
     });
 
-    $(self.iframe_doc).keyup(function(event) {      
+    $(self.iframe_doc).keyup(function(event) {
+      var iframe_height = $(self.iframe_doc).contents().find('body').height();
+      var current_iframe_height = $(self.iframe).height();
+      if (self.autoGrow == true && iframe_height > current_iframe_height) {
+        $(self.iframe).height(iframe_height);
+      }
       self.change(null, self.get_content());
       self.set_selected_controls( self.get_selected_element(), self.controls.rte);
     });
@@ -297,12 +309,13 @@
   };
 
   lwRTE.prototype.toolbar_click = function(obj, control) {
-    var fn = control.exec;
-    var args = control.args || [];
+    var fn        = control.exec;
+    var args      = control.args || [];
+    var self      = this;
     var is_select = (obj.tagName.toUpperCase() == 'SELECT');
     
     $('.rte-panel', this.get_toolbar()).remove();
-
+    
     if(fn) {
       if(is_select)
         args.push(obj);
@@ -329,7 +342,7 @@
     var tb = $("<div></div>").addClass('rte-toolbar').width('100%').append($("<ul></ul>")).append($("<div></div>").addClass('clear'));
     self.tb = tb.get(0);
     var obj, li;
-    
+
     for (var key in controls){
       if(controls[key].separator) {
         li = $("<li></li>").addClass('separator');
@@ -367,12 +380,12 @@
 
 
     $('.md-enable', tb).click(function() {
-      self.enable_markdown();
+      self.html_to_markdown();
       return false;
     });
 
     $('.md-disable', tb).click(function() {
-      self.disable_markdown();
+      self.markdown_to_html();
       return false;
     });
 
@@ -387,7 +400,7 @@
     });
 
     return tb.get(0);
-  }
+  };
 
   lwRTE.prototype.create_panel = function(title, width) {
     var self = this;
@@ -444,12 +457,18 @@
   };
 
   lwRTE.prototype.set_content = function(content) {
-    if (this.input == 'markdown')
+    var self = this;
+
+    if (this.input == 'markdown') { 
       (this.iframe) ? $('body', this.iframe_doc).html(this.showdown.makeHtml(content)):$(this.textarea).val(content);
+    }
     else if (this.input == 'html')
       (this.iframe) ? $('body', this.iframe_doc).html(content):$(this.textarea).val(content);
     else
       throw new Error('input not defined in options [markdown, html]');
+
+    if (self.autoGrow == true)
+      $(self.iframe).height($(self.iframe_doc).contents().find('body').height());
   };
 
   lwRTE.prototype.set_selected_controls = function(node, controls) {
@@ -534,7 +553,7 @@
     
     if(iframe_window.getSelection) {
       rng = iframe_window.getSelection().getRangeAt(0);
-      if($.browser.opera) { //v9.63 tested only
+      if(navigator.userAgent.match(/opera/i)) { 
         var s = rng.startContainer;
         if(s.nodeType === Node.TEXT_NODE)
 	  rng.setStartBefore(s.parentNode);
@@ -630,3 +649,18 @@
   };
   
 })(jQuery, typeof window === "undefined" ? this : window);
+
+// var resizer = new lwRTE_resizer(textarea);
+
+// $(".rte-resizer a", $(textarea).parents('.rte-zone')).mousedown(function(e) {
+//   $(document).mousemove(function(e) {
+//     return lwRTE_resizer.mousemove(resizer, e);
+//   });
+
+//   $(document).mouseup(function(e) {
+//     return lwRTE_resizer.mouseup(resizer, e);
+//   });
+
+//   return lwRTE_resizer.mousedown(resizer, e);
+// });
+

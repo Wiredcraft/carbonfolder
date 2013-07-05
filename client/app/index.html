@@ -72,6 +72,7 @@
           <a href="/#/" class="apps" ng-class="{active : isActive('#/')}" data-icon="A">Posts</a>
           <a href="/#/medias" class="servers" ng-class="{active : isActive('#/medias')}" data-icon="S">Media</a>
           <a href="/#/types" class="settings" data-icon="s" ng-class="{active : isActive('#/types')}">Types</a>
+          <a href="/#/pusher" class="settings" data-icon="l" ng-class="{active : isActive('#/pusher')}">Pusher</a>
         </nav>
 
         <ng-view></ng-view>
@@ -98,6 +99,10 @@
     
       <script src="lib/jsonml-xml.js"></script>
     
+      <script src="lib/underscore-min.js"></script>
+    
+      <script src="lib/github.js"></script>
+    
       <script src="js/jcss.js"></script>
     
       <script src="lib/angular-resource.min.js"></script>
@@ -118,6 +123,8 @@
     
       <script src="js/services/Context.js"></script>
     
+      <script src="js/services/PhotoResizer.js"></script>
+    
       <script src="js/services/Feedback.js"></script>
     
       <script src="js/services/dropbox.js"></script>
@@ -131,6 +138,8 @@
       <script src="js/directives/foundation_directives.js"></script>
     
       <script src="js/controllers/main_controller.js"></script>
+    
+      <script src="lib/moleskine/js/jquery.autogrow.js"></script>
     
       <script src="lib/moleskine/js/showdown.js"></script>
     

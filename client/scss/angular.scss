@@ -26,6 +26,16 @@
 /* } */
 
 
+canvas {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    outline: none;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
+}
 
 .animate-enter {
     -webkit-animation: enter 500ms cubic-bezier(0.445, 0.050, 0.550, 0.950);

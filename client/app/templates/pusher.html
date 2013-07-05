@@ -1,0 +1,44 @@
+
+
+<div id="content">
+  <div id="pane">
+    
+    <header>
+      <div class="actions">
+
+      </div>
+      <input type="text" name="search" placeholder="Filter by name" ng-model="fts">
+    </header>
+    
+    <nav>
+    </nav>
+  </div>
+  
+  
+  <div id="details">
+    <header>
+      <h1>Remote push</h1>
+    </header>
+    <section id="body">
+        <section class="content">                  
+          <h3>Github</h3>
+          <a class="button" ng-click="oauthGithub()">Github</a>
+          <ul>
+            <li ng-repeat="repo in repositories"
+                ng-click="getRepoInfos(repo)">
+              <span>{{repo.full_name}}</span>
+              <div ng-show="repo.branch_selected">
+                <select ng-model="repo.branch_selected"
+                        ng-options="branch for branch in repo.branches">
+                </select>
+                <a class="button" ng-click="pushContent(repo)">Push</a>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+      
+    </section>
+  </div>
+</div>
+

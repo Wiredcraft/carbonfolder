@@ -103,6 +103,117 @@ MCtrl.controller('LoginCtrl', ['$scope', 'Dropbox', 'User', function($scope, Dro
   };
 }]);
 
+/**
+ * @doc controller
+ * @id MCtrl:PusherCtrl
+ * @view pusher.ejs
+ * @description Push to platforms
+ * @author Alexandre Strzelewicz <as@unitech.io>
+ */
+MCtrl.controller('PusherCtrl', ['$scope', '$location', '$http', 'Context', function($scope, $location, $http, Context) {
+
+  var github;
+  var userDt;
+
+  // $scope.branches = ['sadasd', 'hey', 'ho'];
+  // $scope.s_branch = $scope.ptain[0];
+  
+  $scope.oauthGithub = function() {
+    window.location = "https://github.com/login/oauth/authorize?client_id=ed3289bc089d75a1a1ac&scope=user,public_repo,repo,repo:status,gist";    
+  };
+
+  $scope.getRepoInfos = function(repoStruct) {
+    if (repoStruct.branches) return;
+    var repo = github.getRepo(userDt.login, repoStruct.name);
+
+    repoStruct.branch_selected = {};
+    repoStruct.branches = [];
+    
+    repo.listBranches(function(err, branches) {      
+      repoStruct.branches = branches;
+      repoStruct.branch_selected = branches[0];
+      console.log(repoStruct, branches);
+      $scope.$apply();
+    });
+    
+  };
+
+  $scope.pushContent = function(repoStruct) {
+    var repo = github.getRepo(userDt.login, repoStruct.name);
+    
+    function transposate_context(tree) {
+      var ret = [];
+
+      Object.keys(tree).forEach(function(key) {
+        var b_path = key;
+        
+        tree[key].contents.forEach(function(cnt) {
+          ret.push({
+            content : jsYaml.jsonToYaml(cnt.data),
+            filepath : '_posts' + '/' + b_path + '/' + '2012-12-23-' + cnt.filename.replace(/ /g, '-')
+          });
+        });
+      });
+      return ret;
+    }
+   
+    var new_tree = transposate_context(Context.types);
+
+    console.log(new_tree);
+    //new_tree.forEach(function(file) {
+
+    function fin() {
+      console.log('end');
+    }
+    
+    (function ex(new_tree) {
+      if (!new_tree[0]) return fin();
+      var file = new_tree[0];
+      repo.write('gh-pages',
+                 file.filepath,
+                 file.content,
+                 'Writing ' + file.filepath, function(err) {
+                   console.log(arguments);
+                   new_tree.shift();
+                   ex(new_tree);
+                 });
+      return false;
+    })(new_tree);
+  };
+  
+  function logGithub(token) {
+    github = new Github({
+      token: token,
+      auth: "oauth"
+    });
+
+    var user = github.getUser();
+
+    user.me(function(err, data) {
+      userDt = data;
+      console.log(userDt);
+    });
+    
+    user.repos(function(err, repos) {
+      $scope.repositories = repos;    
+      $scope.$apply();
+    });
+  }
+
+  if (window.location.href.match(/\?code=(.*)/)) {
+    var code = window.location.href.match(/\?code=(.*)/)[1].replace('#/pusher', '');
+    if (code){
+      $http({method : 'GET', url : 'http://localhost:9998/authenticate/' + code})
+      .success(function(data) {
+        console.log(data.token);
+        logGithub(data.token);        
+      }).error(function(e) {
+        alert(e);
+      });
+    }
+  }
+  
+}]);
 
 /**
  * @doc controller
@@ -123,6 +234,7 @@ MCtrl.controller('ProjectCtrl', ['$scope', '$location', 'User', 'Dropbox', 'Cont
     Context.current_content.meta.type     = content_type.name;
     Context.current_content.data          = {};
     $scope.addPopover                     = false;
+    $scope.static_content = '';
   };
   
   $scope.add = baseType;
@@ -134,13 +246,14 @@ MCtrl.controller('ProjectCtrl', ['$scope', '$location', 'User', 'Dropbox', 'Cont
   
   $scope.submit = function() {
     var yaml_content = jsYaml.jsonToYaml(Context.current_content.data);
-
-    Orion.emit('loading', 'Creating file');
     
+    Orion.emit('loading', 'Creating file');
+
+    //Context.current_content.meta.type
     Dropbox.createFileForProject(Context.current_project,
                                  Context.current_content.meta.type,
                                  Context.current_content.meta.filename,
-                                 yaml_content, function(err, dt) {                                   
+                                 yaml_content, function(err, dt) {
                                    if (err) alert(err);
                                    Orion.emit('end', 'File created/updated');
                                    Context.refreshProjectContext(Context.current_project, true, function() {
@@ -158,7 +271,7 @@ MCtrl.controller('ProjectCtrl', ['$scope', '$location', 'User', 'Dropbox', 'Cont
  * @description controller for type creation
  * @author Alexandre Strzelewicz <as@unitech.io>
  */
-MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', function($scope, User, Dropbox, Context) {
+MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'PhotoshopService', function($scope, User, Dropbox, Context, PhotoshopService) {
   
   $scope.Context = Context;
 
@@ -171,133 +284,15 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', function(
     Context.current_type = type;
   };
 
-
-  //returns a function that calculates lanczos weight
-  function lanczosCreate(lobes){
-    return function(x){
-      if (x > lobes)
-        return 0;
-      x *= Math.PI;
-      if (Math.abs(x) < 1e-16)
-        return 1
-      var xx = x / lobes;
-      return Math.sin(x) * Math.sin(xx) / x / xx;
-    }
-  }
-
-  //elem: canvas element, img: image element, sx: scaled width, lobes: kernel radius
-  function thumbnailer(elem, img, sx, lobes, cb){
-    this.cb = cb;
-    this.canvas = elem;
-    elem.width = img.width;
-    elem.height = img.height;
-    elem.style.display = "none";
-    this.ctx = elem.getContext("2d");
-    this.ctx.drawImage(img, 0, 0);
-    this.img = img;
-    this.src = this.ctx.getImageData(0, 0, img.width, img.height);
-    this.dest = {
-      width: sx,
-      height: Math.round(img.height * sx / img.width),
-    };
-    this.dest.data = new Array(this.dest.width * this.dest.height * 3);
-    this.lanczos = lanczosCreate(lobes);
-    this.ratio = img.width / sx;
-    this.rcp_ratio = 2 / this.ratio;
-    this.range2 = Math.ceil(this.ratio * lobes / 2);
-    this.cacheLanc = {};
-    this.center = {};
-    this.icenter = {};
-    setTimeout(this.process1, 0, this, 0);
-  }
   
-  thumbnailer.prototype.process1 = function(self, u){
-    self.center.x = (u + 0.5) * self.ratio;
-    self.icenter.x = Math.floor(self.center.x);
-    for (var v = 0; v < self.dest.height; v++) {
-      self.center.y = (v + 0.5) * self.ratio;
-      self.icenter.y = Math.floor(self.center.y);
-      var a, r, g, b;
-      a = r = g = b = 0;
-      for (var i = self.icenter.x - self.range2; i <= self.icenter.x + self.range2; i++) {
-        if (i < 0 || i >= self.src.width)
-          continue;
-        var f_x = Math.floor(1000 * Math.abs(i - self.center.x));
-        if (!self.cacheLanc[f_x])
-          self.cacheLanc[f_x] = {};
-        for (var j = self.icenter.y - self.range2; j <= self.icenter.y + self.range2; j++) {
-          if (j < 0 || j >= self.src.height)
-            continue;
-          var f_y = Math.floor(1000 * Math.abs(j - self.center.y));
-          if (self.cacheLanc[f_x][f_y] == undefined)
-            self.cacheLanc[f_x][f_y] = self.lanczos(Math.sqrt(Math.pow(f_x * self.rcp_ratio, 2) + Math.pow(f_y * self.rcp_ratio, 2)) / 1000);
-          weight = self.cacheLanc[f_x][f_y];
-          if (weight > 0) {
-            var idx = (j * self.src.width + i) * 4;
-            a += weight;
-            r += weight * self.src.data[idx];
-            g += weight * self.src.data[idx + 1];
-            b += weight * self.src.data[idx + 2];
-          }
-        }
-      }
-      var idx = (v * self.dest.width + u) * 3;
-      self.dest.data[idx] = r / a;
-      self.dest.data[idx + 1] = g / a;
-      self.dest.data[idx + 2] = b / a;
-    }
+  var imgG;
 
-    if (++u < self.dest.width)
-      setTimeout(self.process1, 0, self, u);
-    else
-      setTimeout(self.process2, 0, self);
+  $scope.saveImg = function(dt) {
+    //console.log(PhotoshopService.getImageData());
+    Dropbox.writeFile('test4.jpg', dt, function() {
+      console.log('Saved');
+    });
   };
-  thumbnailer.prototype.process2 = function(self){
-    self.canvas.width = self.dest.width;
-    self.canvas.height = self.dest.height;
-    self.ctx.drawImage(self.img, 0, 0);
-    self.src = self.ctx.getImageData(0, 0, self.dest.width, self.dest.height);
-    var idx, idx2;
-    for (var i = 0; i < self.dest.width; i++) {
-      for (var j = 0; j < self.dest.height; j++) {
-        idx = (j * self.dest.width + i) * 3;
-        idx2 = (j * self.dest.width + i) * 4;
-        self.src.data[idx2] = self.dest.data[idx];
-        self.src.data[idx2 + 1] = self.dest.data[idx + 1];
-        self.src.data[idx2 + 2] = self.dest.data[idx + 2];        
-      }
-    }
-    self.ctx.putImageData(self.src, 0, 0);
-    self.canvas.style.display = "block";
-    self.cb(self.src, self.canvas);
-  }
-  
-  var handleImage = function(e) {
-    var reader = new FileReader();
-    reader.onload = function(event){
-      var img = new Image();
-      img.onload = function(){
-        // canvas.width = img.width;
-        // canvas.height = img.height;
-        //ctx.drawImage(img,0,0);
-        new thumbnailer(canvas, img, 188, 3, function(imageData, canvas) {
-          console.log(arguments);
-          console.log();
-          Dropbox.writeFile('test.jpg', canvas.toDataURL('image/jpg').replace(/^data:image\/(png|jpg);base64,/, ""), function() {console.log('ddd')});
-        });
-        //new thumbnailer(canvas2, img, 400, 3);
-        canvas.toDataURL();
-      }
-      img.src = event.target.result;
-    }
-    reader.readAsDataURL(e.target.files[0]);
-  };
-
-  var imageLoader = document.getElementById('imageLoader');
-  imageLoader.addEventListener('change', handleImage, false);
-  var canvas = document.getElementById('imageCanvas');
-  var canvas2 = document.getElementById('imageCanvas2');
-  var ctx = canvas.getContext('2d');
 
 }]);
 
@@ -319,6 +314,12 @@ MCtrl.controller('TypesCtrl', ['$scope', 'User', 'Dropbox', 'Context', function(
     Context.current_type.name              = 'New type';
     Context.current_type.schema            = {};
     Context.current_type.schema.properties = {};
+    Context.current_type.schema.properties = {
+      date : {
+        title : 'Date',
+        type : 'date'
+      }
+    };
   };
   
   $scope.add = baseType;
