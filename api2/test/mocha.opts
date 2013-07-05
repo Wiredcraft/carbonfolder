@@ -1,5 +1,0 @@
---require should
--R spec
---ui bdd
---timeout 15000
---ignore-leaks
