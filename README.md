@@ -17,7 +17,7 @@ Then connect to `http://localhost:9001`
 ### Launching the server (for pushing on Github)
 
 ```
-$ cd gatekeeper
+$ cd server
 $ npm install
 $ node server.js
 ```
