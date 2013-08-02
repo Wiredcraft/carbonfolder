@@ -169,7 +169,7 @@ MCtrl.controller('PusherCtrl', ['$scope', '$location', '$http', 'Context', funct
     (function ex(new_tree) {
       if (!new_tree[0]) return fin();
       var file = new_tree[0];
-      repo.write('gh-pages',
+      repo.write(repoStruct.branch_selected,
                  file.filepath,
                  file.content,
                  'Writing ' + file.filepath, function(err) {
