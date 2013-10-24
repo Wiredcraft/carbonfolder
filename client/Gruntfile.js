@@ -1,4 +1,3 @@
-
 module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-notify');
   grunt.loadNpmTasks('grunt-jade');
@@ -6,15 +5,15 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compass');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-template-html');
-  
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     compass : {
       dev: {
-	options: {
-	  sassDir: 'scss',
-	  cssDir: 'app/css'
-	}
+      	options: {
+      	  sassDir: 'scss',
+      	  cssDir: 'app/css'
+      	}
       }
     },
     template: {
@@ -46,10 +45,10 @@ module.exports = function(grunt) {
     // },
     connect: {
       server: {
-	options: {
-	  port: 9001,
-	  base: 'app'
-	}
+      	options: {
+      	  port: 9001,
+      	  base: 'app'
+      	}
       }
     },
     watch: {
@@ -62,8 +61,8 @@ module.exports = function(grunt) {
         tasks : ['template']
       },
       scss : {
-	files: ['scss/**/*.scss'],
-	tasks: ['compass:dev']
+	      files: ['scss/**/*.scss'],
+	      tasks: ['compass:dev']
       }
     }
   });
