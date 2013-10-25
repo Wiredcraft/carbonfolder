@@ -119,7 +119,8 @@ MCtrl.controller('PusherCtrl', ['$scope', '$location', '$http', 'Context', funct
   // $scope.s_branch = $scope.ptain[0];
 
   $scope.oauthGithub = function() {
-    window.location = "https://github.com/login/oauth/authorize?client_id=0a513d7bdf8ea03fc020&scope=user,public_repo,repo,repo:status,gist";
+    // window.location = "https://github.com/login/oauth/authorize?client_id=0a513d7bdf8ea03fc020&scope=user,public_repo,repo,repo:status,gist";
+    window.location = "https://github.com/login/oauth/authorize?client_id=caecba3f7f5afc975313&scope=user,public_repo,repo,repo:status,gist";
   };
 
   $scope.getRepoInfos = function(repoStruct) {
