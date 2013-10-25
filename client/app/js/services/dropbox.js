@@ -216,6 +216,20 @@ DropboxWrapper.service('Dropbox', ['$q', '$log', function($q, $log) {
   };
 
   /**
+   * @method remove
+   * @description remove file or folder from dropbox
+   */
+  this.remove = function(filepath, callback) {
+    if (!filepath || filepath.length == 0 || typeof(filepath) !== 'string')
+      return callback({msg: 'Cannot use the given filepath'});
+    
+    client.remove(filepath, function(err, stat) {
+      if (err) return alert(err);
+      return callback(null, stat);
+    })
+  }
+
+  /**
    * @method getContents
    * @description get content for a specified project
    */

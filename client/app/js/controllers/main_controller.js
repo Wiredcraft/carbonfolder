@@ -244,6 +244,19 @@ MCtrl.controller('ProjectCtrl', ['$scope', '$location', 'User', 'Dropbox', 'Cont
     $scope.static_content = angular.copy(Context.current_content.data['__content']);
   };
 
+  $scope.remove = function() {
+    var filepath = Context.current_project + '/content/' + Context.current_content.meta.type + '/' + Context.current_content.meta.filename;
+    console.log(filepath);
+    Dropbox.remove(filepath, function(err, data) {
+      if (err) alert(err);
+      Orion.emit('end', 'File deleted');
+      Context.refreshProjectContext(Context.current_project, true, function() {
+        Context.current_content = null;
+        $scope.$apply();
+      });
+    });
+  }
+
   $scope.submit = function() {
     var yaml_content = jsYaml.jsonToYaml(Context.current_content.data);
 
@@ -288,8 +301,6 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
   var imgG;
 
   $scope.saveImg = function(mt, dt) {
-    //console.log(PhotoshopService.getImageData());
-    // console.log(mt, dt);
     Dropbox.writeFile(Context.current_project + '/media/' + mt + '.jpg', dt, function() {
       console.log('Saved');
     });

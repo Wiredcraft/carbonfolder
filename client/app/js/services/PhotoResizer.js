@@ -68,8 +68,8 @@
         '<input placeholder="width" type="text" ng-model="resizeWidth">' +
         '</form>' +
         '</div>' +
-        '<div id="ps-toolbar" ng-show="Context.current_image">' +
-        '<input type="text" placeholder="Image Name" ng-model="imgName" ng-show="Context.current_image"><br/>' +
+        '<br/><div id="ps-toolbar" ng-show="Context.current_image">' +
+        '<input type="text" placeholder="Image Name" ng-model="imgName" ng-show="Context.current_image" ng-hide="Context.cropping || Context.resizing"><br/>' +
         '<a class="button" ng-hide="Context.resizing" ng-click="cropImage()">Crop</a>' + 
         '<a class="button" ng-hide="Context.cropping" ng-click="resizeImage()">Resize</a>' +
         '<a class="button" ng-hide="Context.cropping || Context.resizing" ng-click="undo()">Undo</a>' +
@@ -124,11 +124,11 @@
         var img_dt = PhotoshopService.b64ToRaw(Context.canvas_el.toDataURL());
 
         $scope.save({
-          meta : $scope.imgName,
+          meta : $scope.imgName, // or uploaded file's name
           data : img_dt
         });
       };
-      
+
       $scope.resizeImage = function() {
         if (Context.resizing) {
           $scope.processing = true;

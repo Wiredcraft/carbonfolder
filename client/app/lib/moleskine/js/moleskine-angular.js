@@ -41,7 +41,7 @@ MoleskineModule.directive('moleskine', [function() {
   }];
   
   moleskine.link = function(scope, el, attrs, ngModel) {
-    console.log(scope);
+    // console.log(scope);
       var a = $(el).moleskine({
         width         : scope.width,
         height        : scope.height,
