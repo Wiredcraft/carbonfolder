@@ -49,7 +49,7 @@
         <hr>
         
         <h2>Add field</h2>
-        <form ng-submit="appendField()">
+        <form>
           <div class="field">
             <label>Field title</label>
             <input type="text" ng-model="ntype.title"/>
@@ -60,7 +60,7 @@
                     ng-model="ntype.type">
             </select>
           </div>
-          <input type="submit" class="button" value="Add">
+          <a type="submit" class="button" ng-click="appendField()">Add</a>
         </form>
         <br/>
 

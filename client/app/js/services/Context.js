@@ -75,8 +75,6 @@ Services.factory('Context', ['Dropbox', 'localStorageService', function(Dropbox,
       Dropbox.getAllContents(project_name, function(err, dt, bulk_contents) {
         if (err) return alert(err);
 
-        console.log(project_name, '-', dt, bulk_contents);
-
         //Context.cleanContext();
         
         Context.current_project = project_name;    
