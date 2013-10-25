@@ -60,7 +60,6 @@
       },
       template : '<div class="ps">' +
         '<h3>{{title}}</h3>' +
-        '<input type="text" ng-model="imgName">' +
         '<canvas ng-show="Context.current_image" id="originalImage"></canvas>' +
         '<marquee direction="right" id="ps-processing" ng-show="processing">Processing, wait</marquee>' +
         '<div id="ps-actions">' +
@@ -70,6 +69,7 @@
         '</form>' +
         '</div>' +
         '<div id="ps-toolbar" ng-show="Context.current_image">' +
+        '<input type="text" placeholder="Image Name" ng-model="imgName" ng-show="Context.current_image"><br/>' +
         '<a class="button" ng-hide="Context.resizing" ng-click="cropImage()">Crop</a>' + 
         '<a class="button" ng-hide="Context.cropping" ng-click="resizeImage()">Resize</a>' +
         '<a class="button" ng-hide="Context.cropping || Context.resizing" ng-click="undo()">Undo</a>' +
