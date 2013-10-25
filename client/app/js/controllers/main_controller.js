@@ -360,8 +360,7 @@ MCtrl.controller('TypesCtrl', ['$scope', 'User', 'Dropbox', 'Context', function(
   };
 
   $scope.remove = function() {
-    // Prompt reminding users this will delete
-    // all files that are associated with this type.
+    // This will also delete all files in ProjectName/content/Context.current_type.name
     var safe = prompt('This will remove the type: ' + Context.current_type.name + ' and all files associated with this type. To continue enter "' + Context.current_type.name + '" This cannot be undone.' );
     if ( safe === Context.current_type.name) {
       var filepath = Context.current_project + '/settings/' + Context.current_type.name + '.json';
