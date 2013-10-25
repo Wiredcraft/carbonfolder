@@ -255,7 +255,7 @@ MCtrl.controller('ProjectCtrl', ['$scope', '$location', 'User', 'Dropbox', 'Cont
         $scope.$apply();
       });
     });
-  }
+  };
 
   $scope.submit = function() {
     var yaml_content = jsYaml.jsonToYaml(Context.current_content.data);
@@ -357,6 +357,26 @@ MCtrl.controller('TypesCtrl', ['$scope', 'User', 'Dropbox', 'Context', function(
 
   $scope.deleteField = function(field) {
     delete Context.current_type.schema.properties[field.title];
+  };
+
+  $scope.remove = function() {
+    // Prompt reminding users this will delete
+    // all files that are associated with this type.
+    var filepath = Context.current_project + '/settings/' + Context.current_type.name + '.json';
+    var contentFolder = Context.current_project + '/content/' + Context.current_type.name;
+    Dropbox.remove(filepath, function(err, data) {
+      if (err) alert(err);
+      Dropbox.remove(contentFolder, function(err, data) {
+        if (err) alert(err);
+
+        Orion.emit('end', 'Type deleted');
+        Context.refreshProjectContext(Context.current_project, true, function() {
+          Context.current_type = null;
+          $scope.$apply();
+        });
+
+      });
+    });
   };
 
   $scope.createNewContentType = function() {
