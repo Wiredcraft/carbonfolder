@@ -60,6 +60,7 @@
       },
       template : '<div class="ps">' +
         '<h3>{{title}}</h3>' +
+        '<input type="text" ng-model="imgName">' +
         '<canvas ng-show="Context.current_image" id="originalImage"></canvas>' +
         '<marquee direction="right" id="ps-processing" ng-show="processing">Processing, wait</marquee>' +
         '<div id="ps-actions">' +
@@ -123,6 +124,7 @@
         var img_dt = PhotoshopService.b64ToRaw(Context.canvas_el.toDataURL());
 
         $scope.save({
+          meta : $scope.imgName,
           data : img_dt
         });
       };

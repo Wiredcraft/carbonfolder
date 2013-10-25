@@ -287,9 +287,10 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
 
   var imgG;
 
-  $scope.saveImg = function(dt) {
+  $scope.saveImg = function(mt, dt) {
     //console.log(PhotoshopService.getImageData());
-    Dropbox.writeFile('test4.jpg', dt, function() {
+    // console.log(mt, dt);
+    Dropbox.writeFile(Context.current_project + '/media/' + mt + '.jpg', dt, function() {
       console.log('Saved');
     });
   };
