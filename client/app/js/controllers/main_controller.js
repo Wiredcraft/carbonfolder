@@ -362,21 +362,24 @@ MCtrl.controller('TypesCtrl', ['$scope', 'User', 'Dropbox', 'Context', function(
   $scope.remove = function() {
     // Prompt reminding users this will delete
     // all files that are associated with this type.
-    var filepath = Context.current_project + '/settings/' + Context.current_type.name + '.json';
-    var contentFolder = Context.current_project + '/content/' + Context.current_type.name;
-    Dropbox.remove(filepath, function(err, data) {
-      if (err) alert(err);
-      Dropbox.remove(contentFolder, function(err, data) {
+    var safe = prompt('This will remove the type: ' + Context.current_type.name + ' and all files associated with this type. To continue enter "' + Context.current_type.name + '" This cannot be undone.' );
+    if ( safe === Context.current_type.name) {
+      var filepath = Context.current_project + '/settings/' + Context.current_type.name + '.json';
+      var contentFolder = Context.current_project + '/content/' + Context.current_type.name;
+      Dropbox.remove(filepath, function(err, data) {
         if (err) alert(err);
+        Dropbox.remove(contentFolder, function(err, data) {
+          if (err) alert(err);
 
-        Orion.emit('end', 'Type deleted');
-        Context.refreshProjectContext(Context.current_project, true, function() {
-          Context.current_type = null;
-          $scope.$apply();
+          Orion.emit('end', 'Type deleted');
+          Context.refreshProjectContext(Context.current_project, true, function() {
+            Context.current_type = null;
+            $scope.$apply();
+          });
+
         });
-
       });
-    });
+    }
   };
 
   $scope.createNewContentType = function() {
