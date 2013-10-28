@@ -86,7 +86,7 @@ Services.factory('Context', ['Dropbox', 'localStorageService', function(Dropbox,
           bulk_contents : bulk_contents
         }));
 
-        Orion.emit('end', 'Data setted in localstorage for ' + project_name);
+        Orion.emit('end', 'Data set in localstorage for ' + project_name);
         
         return cb(err);
       });

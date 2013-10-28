@@ -24,7 +24,7 @@ DropboxWrapper.run(function() {
  
  * @description dropbox module
  */
-DropboxWrapper.service('Dropbox', ['$q', '$log', function($q, $log) {
+DropboxWrapper.service('Dropbox', ['$q', '$log', '$timeout', function($q, $log, $timeout) {
 
   var self = this;
   
@@ -188,13 +188,68 @@ DropboxWrapper.service('Dropbox', ['$q', '$log', function($q, $log) {
   };
 
   /**
+   * @method getAllMedia
+   * @description returns array of filenames in media folder
+   */
+  this.getAllMedia = function(project_name) {
+    var deferred = $q.defer();
+    var media_dir = project_name.concat('/media');
+    client.readdir(media_dir, function(err, dt) {
+      if (err) { deferred.reject(err); }
+      deferred.resolve(dt);
+    });
+    return deferred.promise;
+  };
+
+  /**
+   * @method getMedia
+   * @description returns a file from the media folder
+   */
+  this.getMedia = function(project_name, filename) {
+    var def = $q.defer();
+    var path = project_name + '/media/' + filename;
+    client.readFile(path, function(err, content) {
+      if (err) { def.reject(err); }
+      def.resolve(content)
+    });
+    return def.promise;
+  };
+
+  this.fetchMedia = function(project_name, cb) {
+      var self = this;
+      var fileData = []
+
+      this.getAllMedia(project_name).then(function(media) {
+          
+          (function ex(media) {
+              if (media[0] == null) { return cb(fileData); }
+
+              // Orion emit status here
+
+              self.getMedia(project_name, media[0]).then(function(file) {
+
+                  var obj = { name: media[0], data: file };
+                  fileData.push(obj);
+
+                  media.shift();
+                  return ex(media);
+              });
+
+              return false;
+          })(media);
+
+      });
+  };
+
+
+  /**
    * @method createFileForProject
    * @description create file depending of project name and content type
    */
   this.createFileForProject = function(project_name, content_type, title, data, cb) {
     var filename = title;
     var filepath = project_name.concat('/content/', content_type, '/', filename);
-    console.log(filepath, data);
+    // console.log(filepath, data);
     client.writeFile(filepath, data, function(err, stat) {
       if (err) return alert(err);
       return cb(null, stat);
