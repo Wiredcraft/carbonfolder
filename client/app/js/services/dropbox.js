@@ -24,7 +24,7 @@ DropboxWrapper.run(function() {
  
  * @description dropbox module
  */
-DropboxWrapper.service('Dropbox', ['$q', '$log', '$timeout', function($q, $log, $timeout) {
+DropboxWrapper.service('Dropbox', ['$q', '$log', function($q, $log) {
 
   var self = this;
   
@@ -191,43 +191,42 @@ DropboxWrapper.service('Dropbox', ['$q', '$log', '$timeout', function($q, $log, 
    * @method getAllMedia
    * @description returns array of filenames in media folder
    */
-  this.getAllMedia = function(project_name) {
-    var deferred = $q.defer();
+  this.getAllMedia = function(project_name, cb) {
     var media_dir = project_name.concat('/media');
     client.readdir(media_dir, function(err, dt) {
-      if (err) { deferred.reject(err); }
-      deferred.resolve(dt);
+      if (err) { console.error(err); cb(err); }
+      cb(dt);
     });
-    return deferred.promise;
   };
 
   /**
    * @method getMedia
    * @description returns a file from the media folder
    */
-  this.getMedia = function(project_name, filename) {
-    var def = $q.defer();
+  this.getMedia = function(project_name, filename, cb) {
     var path = project_name + '/media/' + filename;
     client.readFile(path, function(err, content) {
-      if (err) { def.reject(err); }
-      def.resolve(content)
+      if (err) { console.error(err); cb(err); }
+      cb(content);
     });
-    return def.promise;
   };
 
+  /**
+   * @method fetchMedia
+   * @description returns all the media for a project
+   */
   this.fetchMedia = function(project_name, cb) {
       var self = this;
       var fileData = []
 
-      this.getAllMedia(project_name).then(function(media) {
+      this.getAllMedia(project_name, function(media) {
           
           (function ex(media) {
               if (media[0] == null) { return cb(fileData); }
 
               // Orion emit status here
 
-              self.getMedia(project_name, media[0]).then(function(file) {
-
+              self.getMedia(project_name, media[0], function(file) {
                   var obj = { name: media[0], data: file };
                   fileData.push(obj);
 

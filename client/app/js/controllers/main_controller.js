@@ -311,16 +311,7 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
   };
 
   // Get media
-  // Dropbox.getAllMedia(Context.current_project, function(err, data) {
-    // console.log(err, data);
-  // });
-  // Dropbox.getAllMedia(Context.current_project).then(function(res) {
-    // console.log(res);
-  // });
-  Dropbox.fetchMedia(Context.current_project, function(res) {
-    // $scope.$apply();
-    console.log(res);
-  });
+
 
 }]);
 
