@@ -75,20 +75,26 @@ Services.factory('Context', ['Dropbox', 'localStorageService', function(Dropbox,
       Dropbox.getAllContents(project_name, function(err, dt, bulk_contents) {
         if (err) return alert(err);
 
+        Dropbox.fetchMedia(project_name, function(mediaFiles) {
+
         //Context.cleanContext();
         
-        Context.current_project = project_name;    
-        Context.types           = dt;
-        Context.bulk_contents   = bulk_contents;
-        
-        localStorageService.set(project_name, JSON.stringify({
-          types : dt,
-          bulk_contents : bulk_contents
-        }));
+          Context.current_project = project_name;    
+          Context.types           = dt;
+          Context.bulk_contents   = bulk_contents;
+          Context.bulk_medias     = mediaFiles;
+          
+          localStorageService.set(project_name, JSON.stringify({
+            types : dt,
+            bulk_contents : bulk_contents,
+            bulk_medias   : mediaFiles
+          }));
 
-        Orion.emit('end', 'Data set in localstorage for ' + project_name);
-        
-        return cb(err);
+          Orion.emit('end', 'Data set in localstorage for ' + project_name);
+          
+          return cb(err);
+
+        });
       });
     }
     else {
@@ -96,6 +102,7 @@ Services.factory('Context', ['Dropbox', 'localStorageService', function(Dropbox,
       Context.current_project = project_name;    
       Context.types           = localProject.types;
       Context.bulk_contents   = localProject.bulk_contents;
+      Context.bulk_medias     = localProject.bulk_medias;
     }
   };
   
