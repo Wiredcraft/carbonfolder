@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang='en' ng-app='Feathers' ng-controller='FeathersCtrl'>
+<head>
+  <meta charset='utf-8'>
+  <title>Box CMS</title>
+
+  <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
+  <link rel='stylesheet' type='text/css' href='<%= file %>' /><% }); %>
+</head>
+<body>
+  <!-- NAV -->
+  <nav id='navigation'>
+    <a href='/' class='logo'>Box CMS</a>
+    <a href='#' class='content'>Content</a>
+    <a href='#' class='media'>Media</a>
+    <a href='#' class='settings'>Settings</a>
+    <a href='#' class='user'><img src='/assets/images/hunvreus.jpeg' alt='hunvreus'/> hunvreus</a>
+  </nav>
+
+  <section id='main'>
+    <nav class='sidebar'>
+      <header class='header'>
+        <div class='options'>
+          <a href='#'>Add</a>
+        </div>
+        <input type='text' placeholder='Filter by keyword' />
+      </header>
+      <section class='body'>
+        <a href='#' class='media'>
+          Github For Everything
+          <span class='description'>Last edited 3 days ago by hunvreus</span>
+        </a>
+        <a href='#' class='media'>
+          JingJS Sponsored By Wiredcraft
+          <span class='description'>Last edited 2 days ago by quentinberder</span>
+        </a>
+      </section>
+    </nav>
+        
+    <article class='content'>
+      <header class='header'>
+        <div class='options'>
+          <a href='#' class='save'>Save</a>
+        </div>
+        <h1>Github For Everything<h1>
+      </header>
+      <section class='field title'>
+        <div class='label'>Title</div>
+        <div class='value'>GitHub for Everything</div>
+      </section>
+      <section class='field body'>
+        <div class='label'>Body</div>
+        <div class='value editable'>
+      <p>We're huge fans of Github at Wiredcraft. We started using it in 2009 and haven't looked back. While it initially mostly replaced our code tracking tool (I believe we were then using Redmine), it now is the single most important platform for our team to collaborate, on all levels, from code to HR.</p>
+
+<h2>How did we get there?</h2>
+
+<p>We went through using a few tools over the years; Basecamp, Open Atrium or more recently <a href="https://trello.com/">Trello</a> for threaded discussions, Redmine for issue tracking, IRC or Campfire for chats, Wikis, Hackpad and files, in Dropbox or Git, for documentation...</p>
+
+<p>It became painfully obvious over time that we were spreading ourselves thin. I wrote about <a href="http://devo.ps/blog/2013/06/20/automation-and-friction.html">the increasing surface of friction</a> that the adoption of the SaaS model has introduced. Our needs changed over the years and we faced a few key junctions when we had to adopt a new tool.</p>
+
+<p>This meant convincing the entire team to adopt a new workflow; not something particularly easy to do with a team of technologists mostly focused on shipping stuff.</p>
+
+<h2>One platform to rule them all</h2>
+
+<p>First, let me illustrate how our current approach is actually impacting our communication.</p>
+
+<p>Juha joined our team two months ago. He's been involved in some of the most passionately debated issues we're working on, getting his hands dirty with Vagrant, Docker, Python, Ansible and <a href="http://devo.ps/blog/2013/09/11/zookeeper-vs-doozer-vs-etcd.html">some of the more esoteric things we're doing on devo.ps</a>. <strong>In these 2 months, he received a total of 15 emails</strong>.</p>
+
+<p>What we're effectively doing is driving most of our collaboration through Github:</p>
+
+<ul>
+<li><p><strong>Our internal wiki</strong>, associated to the code of <a href="http://wiredcraft.com">our company site</a> (a Github page by the way) is filled with awesomeness. From the "Getting started" page that walks new employees through our tools and processes, to the tutorials on "Writing issues, comments and milestones", we've captured most of the valuable lessons we've learnt along the way.</p>
+
+<p><img src="http://wiredcraft.com/images/posts/wiki.png" alt="Wiki"></p></li>
+<li><p><strong>Our recruitment process</strong> is entirely done through the issue queue. Whenever we receive a new application by email, we create an issue on Github and let one of our managers grab it.</p></li>
+<li><p><strong>Day-to-day operations</strong>, from buying new snacks for the office to dealing with HR or logistical issues. Need a new SSD for your Macbook? Create an issue on Github. Want to get sponsored to attend a conference in Beijing? Same deal.</p>
+
+<p><img src="http://wiredcraft.com/images/posts/issues.png" alt="Wiki"></p></li>
+<li><p><strong>Marketing efforts</strong> are discussed and led through the Github issue. This very post was discussed, planned and wrote on Github.</p></li>
+<li><p>And a lot more...</p></li>
+</ul>
+
+<p>This actually had a couple interesting effects on the team:</p>
+
+<ul>
+<li><strong>We've significantly increased participation</strong>. Our staff (engineers, designers et al) are already working on Github. There's virtually no friction when engaging them on discussions not related to their day-to-day responsibilities.</li>
+<li><strong>We've drastically raised transparency</strong>. Everything is done on Github, available for all to see and comment on. Processes like employee termination or tax payment are in the Wiki, for every new staff to check (and even collaborate to).</li>
+</ul>
+
+<p>By the way, <a href="https://github.com/blog/699-making-github-more-open-git-backed-wikis">Wikis on Github are full-blown Git repositories</a>.</p>
+
+<h2>Epilogue</h2>
+
+<p>There are still a couple things that we're not tracking in there obviously. We use  a <a href="https://app.futuresimple.com">3rd party solution for our CRM</a> and are sharing a lot of administrative and legal documents through Dropbox. We've also started using <a href="http://huboard.com">Huboard</a> in some cases, bringing a more Kanban-like (some may say Trello-like) approach to managing our tasks, and, as we've written before, <a href="http://devo.ps/blog/2013/06/20/automation-and-friction.html">we heavily automate things</a> through <a href="http://hubot.github.com">Hubot</a>.</p>
+
+<p><strong>But Github is where we go for everything we produce (content, design, code), discuss (issues, announcements) and document (guides, processes, documentation).</strong></p>
+        </div>
+      </section>
+    </article>
+  </section>
+
+  <!-- OVERLAY & MODAL -->
+  <div id='overlay'></div>
+  <div id='modal'>
+    <header class='header'>
+      <div class='options'>
+        <a class='close'>Close</a>
+      </div>
+      <h2>Hello there, this is a prompt</h2>
+    </header>
+
+    <section class='wrapper'>
+       <p>Stuff you would display in a prompt.</p>
+    </section>
+
+    <footer class='footer'>
+      <a class='cancel'>Cancel</a>
+      <a class='submit'>Chat</a>
+    </footer>
+  </div>
+
+  <!-- compiled JS --><% scripts.forEach( function ( file ) { %>
+  <script type='text/javascript' src='<%= file %>'></script><% }); %>
+  <script>var editor = new MediumEditor('.editable');</script>
+</body>
+</html>

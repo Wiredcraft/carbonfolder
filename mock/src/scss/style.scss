@@ -1,0 +1,472 @@
+@import 'compass/css3';
+@import 'compass/css3/border-radius';
+@import 'compass/utilities/general/clearfix';
+
+@import 'font';
+
+/* Colors */
+
+$primary: #5ba4e5;
+$secondary: #9fbb58;
+$base: shade(desaturate($primary, 40%), 80%);
+
+/* Spacing */
+
+$gutter: 20px;
+$radius: 1px;
+
+/* Layout */
+
+$menu: 100px;
+$sidebar: 280px;
+$width: 1000px;
+$prompt: 660px;
+
+/* Typography */
+
+$family: "Open Sans", Arial, sans-serif;
+$size: 16px;
+$pico: 10px;
+$micro: 12px;
+$small: 14px;
+$large: 18px;
+$huge: 24px;
+$gigantic: 32px;
+$colossal: 46px;
+
+/* Mixins */
+
+@font-face {
+  font-family: 'icons';
+  src:url('/assets/font/icons.eot');
+  src:url('/assets/font/icons.eot?#iefix') format('embedded-opentype'),
+    url('/assets/font/icons.woff') format('woff'),
+    url('/assets/font/icons.ttf') format('truetype'),
+    url('/assets/font/icons.svg#Icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@mixin icon {
+  font-family: 'icons';
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 120%;
+  speak: none;
+  text-transform: none;
+  vertical-align: middle;
+  -webkit-font-smoothing: antialiased;
+}
+
+@mixin button($color: $primary, $clear: false) {
+  background: $color;
+  @include border-radius($radius + 1);
+  font-size: 80%;
+  padding: $gutter/3 $gutter;
+  text-transform: uppercase;
+  &:hover {
+    background: tint($color, 10%);
+    text-decoration: none;
+  }
+  &:active,
+  &.active {
+    background: tint($color, 10%);
+  }
+  @if $clear == true {
+    color: tint($base, 20%);
+  }
+  @else {
+    color: #FFF;
+  }
+}
+
+@mixin popover() {
+  padding: $gutter/4 $gutter/2;
+  position: relative;
+  span {
+    background: $base;
+    @include border-radius($radius);
+    color: #FFF;
+    display: none;
+    font-size: $small;
+    opacity: 0.9;
+    padding: $gutter/4 $gutter/2;
+    position: absolute;
+    left: -$gutter/3;
+    top: -2*$gutter;
+    z-index: 999;
+    &:after {
+      border-right: $gutter/4 solid transparent;
+      border-bottom-color: $base;
+      border-top: $gutter/4 solid $base;
+      border-left: $gutter/4 solid transparent;
+      content: '';
+      bottom: -$gutter/4;
+      margin-right: -$gutter/4;
+      position: absolute;
+      left: $gutter;
+    }
+  }
+  &:hover {
+    span {
+      display: block;
+    }
+  }
+  &:before {
+    margin-right: 0;
+  }
+  &:first-child {
+    @include border-radius(2px 0 0 2px);
+    &:hover {
+      border-right-width: 1px;
+    }
+    &:hover,
+    &:active {
+      border-right-width: 1px;
+      & + a {
+        border-left-width: 0;
+      }
+    }
+  }
+  &:last-child {
+    @include border-radius(0 2px 2px 0);
+    border-right-width: 1px;
+  }
+}
+
+@mixin box() {
+  background: #FFF;
+  @include border-radius($radius);
+  @include box-shadow(rgba(0, 0, 0, 0.1) 0 2px 2px);
+}
+
+/* GENERAL */
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: tint($base, 90%);
+  color: tint($base, 20%);
+  font-family: $family;
+  font-size: $size;
+  line-height: 140%;
+}
+
+a {
+  color: shade($primary, 5%);
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+h1,
+h2,
+h3 {
+  color: $base;
+  font-weight: normal;
+  line-height: 120%;
+  margin: 0 0 $gutter;
+}
+
+h1 {
+  font-size: $gigantic;
+}
+
+h2 {
+  font-size: $huge;
+}
+
+h3 {
+  font-size: $large;
+}
+
+h4 {
+  font-size: $size;
+}
+
+p {
+  margin: 0 0 $gutter;
+}
+
+/* Forms */
+
+form {
+  line-height: 140%;
+  margin: 0;
+  padding: 0;
+}
+
+form .field {
+  @include clearfix;
+  padding: ($gutter/2) 0;
+}
+
+label {
+  display: block;
+  font-size: $small;
+  margin-bottom: $gutter/4;
+}
+
+input,
+textarea {
+  color: tint($base, 20%);
+  font-family: $family;
+  font-size: $size;
+  line-height: 140%;
+}
+
+input:not([type=submit]),
+textarea,
+.field .value {
+  background: #FFF;
+  border: 1px solid tint($base, 85%);
+  @include border-radius($radius);
+  @include box-shadow(rgba(0, 0, 0, 0.1) 0 2px 2px 0 inset);
+  padding: ($gutter/4) ($gutter/2);
+  &:active,
+  &:focus {
+    border-color: tint($primary, 40%);
+    outline: none;
+  }
+  &[disabled],
+  &[disabled=disabled],
+  &[readonly=true] {
+    background: transparent;
+  }
+}
+
+:focus {
+  outline: none;
+}
+
+/* Buttons */
+
+.options {
+  float: right;
+  a,
+  .label {
+    float: left;
+    margin-left: $gutter/2;
+    &:before {
+      @include icon();
+      margin-right: $gutter/2;
+    }
+  }
+  .bundle {
+    float: left;
+    margin-left: $gutter/2;
+    a {
+      @include button(tint($base, 90%), true);
+      border-right-width: 0;
+      @include border-radius(0);
+      display: inline-block;
+      margin-left: 0;
+      @include popover();
+    }
+  }
+}
+
+/* NAV */
+
+#navigation {
+  background: $base;
+  @include clearfix();
+  color: tint($base, 80%);
+  a {
+    color: #FFF;
+    display: block;
+    float: left;
+    padding: 1.5*$gutter/2 $gutter;
+    text-align: center;
+    vertical-align: middle;
+    &:before {
+      @include icon();
+      margin-right: $gutter/2;
+    }
+    &.logo {
+      font-family: 'Montserrat', Arial, sans-serif;
+      text-transform: uppercase;
+    }
+    &.content:before {
+      content: 'c';
+    }
+    &.media:before {
+      content: 'm';
+    }
+    &.settings:before {
+      content: 's';
+    }
+    &.user {
+      float: right;
+      img {
+        @include border-radius($radius);
+        float: left;
+        margin-right: $gutter/2;
+        width: $gutter;
+      }
+    }
+    &.active,
+    &:active,
+    &:hover {
+      background: tint($base, 10%);
+      text-decoration: none;
+    }
+  }
+}
+
+/* MAIN */
+
+#main {
+  padding: $gutter;
+  .sidebar {
+    @include box();
+    float: left;
+    width: $sidebar;
+    .header {
+      @include clearfix();
+      padding: 1.5*$gutter/2 $gutter;
+      a {
+        @include button($secondary);
+      }
+      input {
+        float: left;
+        width: 50%;
+      }
+    }
+    .body {
+      a {
+        border-top: 1px solid tint($base, 90%);
+        color: tint($base, 20%);
+        display: block;
+        padding: 1.5*$gutter/2 $gutter;
+        &.active,
+        &:active,
+        &:hover {
+          background: tint($base, 98%);
+          text-decoration: none;
+        }
+        .description {
+          color: tint($base, 60%);
+          display: block;
+          font-size: $micro;
+        }
+      }
+    }
+  }
+  .content {
+    @include box();
+    margin-left: $sidebar + 2*$gutter;
+    max-width: 800px;
+    .header {
+      padding: 1.5*$gutter/2 $gutter;
+      h1 {
+        margin: 0;
+      }
+      a {
+        @include button($primary);
+      }
+    }
+    .field {
+      border-top: 1px solid tint($base, 90%);
+      @include clearfix();
+      padding: 1.5*$gutter/2 $gutter;
+      .label {
+        color: tint($base, 60%);
+        margin-bottom: $gutter/2;
+      }
+      .value {
+        @include clearfix();
+      }
+    }
+  }
+}
+
+/* FOOTER */
+
+#footer {
+  color: tint($base, 60%);
+  clear: both;
+  font-size: $small;
+  padding: $gutter;
+  a {
+    border-bottom: 1px solid tint($base, 80%);
+    color: tint($base, 60%);
+    margin-right: $gutter/4;
+    text-decoration: none;
+  }
+  .copyright {
+    float: right;
+  }
+}
+
+/* MODAL */
+
+#modal {
+  background-color: #FFF;
+  @include border-radius($radius);
+  max-width: 630px;
+  min-width: 320px;
+  height: auto;
+  left: 50%;
+  max-width: $prompt;
+  min-width: $prompt/2;
+  position: fixed;
+  top: 50%;
+  width: 50%;
+  z-index: 2000;
+  @include translate(-50%, -50%);
+  .header {
+    padding: $gutter;
+    h2 {
+      font-size: $gigantic;
+      margin: 0;
+    }
+  }
+  .content{
+    padding: 0 $gutter;
+  }
+  .footer {
+    background: tint($base, 93%);
+    border-top: 1px solid tint($base, 90%);
+    @include clearfix();
+    padding: $gutter;
+    text-align: right;
+    a {
+      cursor: pointer;
+      margin-left: $gutter;
+    }
+  }
+  .submit {
+    @include button();
+  }
+}
+
+#overlay {
+  background: #000;
+  height: 100%;
+  left: 0;
+  opacity: 0.8;
+  position: fixed;
+  top: 0;
+  @include transition-property(all);
+  @include transition-duration(0.3s);
+  @include transition-timing-function(ease-in);
+  width: 100%;
+  z-index: 999;
+}
+
+#modal,
+#overlay {
+  display: none;
+}
+
+body.modal {
+  #modal,
+  #overlay {
+    display: block;
+  }
+}

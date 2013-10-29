@@ -1,0 +1,10 @@
+{
+    "name": "Feathers",
+    "version": "0.0.1",
+    "devDependencies": {
+        "angular": "~1.0.7",
+        "angular-ui-router": "*",
+        "normalize-css": "*",
+        "medium-editor": "*"
+    }
+}
