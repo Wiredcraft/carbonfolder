@@ -318,7 +318,7 @@ textarea,
     &.active,
     &:active,
     &.active:hover {
-      background: tint($base, 10%);
+      background: tint($base, 5%);
       color: #FFF;
     }
     &:hover {
@@ -328,8 +328,9 @@ textarea,
     }
   }
   .sub {
-    background: tint($base, 10%);
+    background: tint($base, 5%);
     .header {
+      border-top: 1px solid $base;
       font-size: $micro;
       padding: 1.5*$gutter/2 $gutter;
       input {
@@ -345,9 +346,9 @@ textarea,
     }
     .body {
       a {
-        border-top: tint($base, 5%);
+        border-top: 1px solid $base;
         &:hover {
-          background: tint($base, 15%);
+          background: shade($base, 10%);
         }
         .description {
           color: tint($base, 60%);
