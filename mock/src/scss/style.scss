@@ -274,14 +274,17 @@ textarea,
 
 #navigation {
   background: $base;
+  border-right: 1px solid shade($base, 10%);
   @include clearfix();
   color: tint($base, 80%);
+  font-size: $small;
+  height: 100%;
+  position: fixed;
+  width: $sidebar;
   a {
-    color: #FFF;
+    color: tint($base, 95%);
     display: block;
-    float: left;
     padding: 1.5*$gutter/2 $gutter;
-    text-align: center;
     vertical-align: middle;
     &:before {
       @include icon();
@@ -290,6 +293,9 @@ textarea,
     &.logo {
       font-family: 'Montserrat', Arial, sans-serif;
       text-transform: uppercase;
+      &:before {
+        content: 'b';
+      }
     }
     &.content:before {
       content: 'c';
@@ -301,7 +307,7 @@ textarea,
       content: 's';
     }
     &.user {
-      float: right;
+      /*position: fixed;*/
       img {
         @include border-radius($radius);
         float: left;
@@ -311,43 +317,37 @@ textarea,
     }
     &.active,
     &:active,
-    &:hover {
+    &.active:hover {
       background: tint($base, 10%);
+      color: #FFF;
+    }
+    &:hover {
+      background: shade($base, 10%);
+      color: #FFF;
       text-decoration: none;
     }
   }
-}
-
-/* MAIN */
-
-#main {
-  padding: $gutter;
-  .sidebar {
-    @include box();
-    float: left;
-    width: $sidebar;
+  .sub {
+    background: tint($base, 10%);
     .header {
-      @include clearfix();
+      font-size: $micro;
       padding: 1.5*$gutter/2 $gutter;
-      a {
-        @include button($secondary);
-      }
       input {
-        float: left;
+        @include border-radius(20px);
+        font-size: $micro;
+        padding: $gutter/4 $gutter/2;
         width: 50%;
+      }
+      a {
+        @include button($primary);
+        padding: $gutter/8 $gutter/4;
       }
     }
     .body {
       a {
-        border-top: 1px solid tint($base, 90%);
-        color: tint($base, 20%);
-        display: block;
-        padding: 1.5*$gutter/2 $gutter;
-        &.active,
-        &:active,
+        border-top: tint($base, 5%);
         &:hover {
-          background: tint($base, 98%);
-          text-decoration: none;
+          background: tint($base, 15%);
         }
         .description {
           color: tint($base, 60%);
@@ -357,6 +357,12 @@ textarea,
       }
     }
   }
+}
+
+/* MAIN */
+
+#main {
+  padding: $gutter;
   .content {
     @include box();
     margin-left: $sidebar + 2*$gutter;
