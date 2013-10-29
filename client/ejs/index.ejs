@@ -1,84 +1,71 @@
 <!DOCTYPE html>
 <html x-ng-app="DCMS">
   <head>
-    <title><%= data.title %></title>
-    
-    <!-- Meta -->
-    <meta charset="utf-8">
-    <meta name="description" content="<%= data.description %>">
-    <meta name="viewport" content="width=device-width">
-    
-    <!-- Icons -->
-    <link rel="shortcut icon" href="/images/favicon.png">
-    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/images/apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/images/apple-touch-icon-114x114.png">
-    
-    <!-- CSS -->
-    <% data.css.forEach(function(css) { %>
-      <link rel="stylesheet" href="<%= css %>">
-    <% }) %>
+  <title><%= data.title %></title>
+  
+  <!-- Meta -->
+  <meta charset="utf-8">
+  <meta name="description" content="<%= data.description %>">
+  <meta name="viewport" content="width=device-width">
+  
+  <!-- Icons -->
+  <link rel="shortcut icon" href="/images/favicon.png">
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/images/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/images/apple-touch-icon-114x114.png">
+  
+  <!-- CSS -->
+  <% data.css.forEach(function(css) { %>
+    <link rel="stylesheet" href="<%= css %>">
+  <% }) %>
 
-    
+  
   </head>
   <body ng-controller="MainCtrl">
-    <div id="app">
-      
-      <header id="header">        
-        <nav>
-          <a href="#help" class="help">Help</a>
-          <a href="#user" class="user">{{User.get().name}} <i>{{User.get().privateBytes | bytesToMb}} / {{User.get().usedQuota | bytesToMb}}</i></a>
 
-        </nav>
-        <a href="#" id="logo">focused.io</a>
-      </header>
+    <nav id='navigation'>
+      <a href='/#/' class='logo'>Box CMS</a>
+      <a href='/#/' class='content' ng-class="{active:isActive('#/')}">Content</a>
+      <a href='/#/medias' class='media' ng-class="{active:isActive('#/medias')}">Media</a>
+      <a href='/#/types' class='types' ng-class="{active:isActive('#/types')}">Types</a>
+      <a href='/#/#pusher' class='settings' ng-class="{active:isActive('#/pusher')}">Settings</a>
+      <a href='#' class='user'><img src='/assets/images/hunvreus.jpeg' alt='hunvreus'/> hunvreus</a>
+    </nav>
 
-      
-      <section id="main">
+    <!-- Main View -->
+    <section id='main'>
+      <ng-view></ng-view>
+    </section>
 
-        <nav id="menu" ng-controller="NavbarCtrl">
-
-          <header>
-            <div id="logo">
-              <!-- LOGO -->
-            </div>
-
-            <select ng-model="Context.current_project"
-                    class="project-select"
-                    ng-options="project for project in Context.projects">
-            </select>
-
-            <div style="float : right; margin-right : 5px;">
-              <a class="settings" data-icon="a" ng-click="createNewProject()"></a>
-              <a class="settings" data-icon="s" ng-click="projectPopover = !projectPopover"></a>
-              <div class="popover popover-edit-project" ng-show="projectPopover">
-                <a ng-click="deleteProject(); projectPopover = false">Delete Project</a>
-                <a ng-click="refreshProject(); projectPopover = false">Force Refresh</a>
-              </div>
-            </div>
-                        
-          </header>
-          
-          <a href="/#/" class="apps" ng-class="{active : isActive('#/')}" data-icon="A">Posts</a>
-          <a href="/#/medias" class="servers" ng-class="{active : isActive('#/medias')}" data-icon="S">Media</a>
-          <a href="/#/types" class="settings" data-icon="s" ng-class="{active : isActive('#/types')}">Types</a>
-          <a href="/#/pusher" class="settings" data-icon="l" ng-class="{active : isActive('#/pusher')}">Pusher</a>
-        </nav>
-
-        <ng-view></ng-view>
-        
-                
-      </section>
-    </div>
-
+    <!-- Orion Feedback Messages -->
     <section id="messages">
       <feedback></feedback>
     </section>
+
+    <!-- OVERLAY & MODAL -->
+    <div id='overlay'></div>
+    <div id='modal'>
+      <header class='header'>
+        <div class='options'>
+          <a class='close'>Close</a>
+        </div>
+        <h2>Hello there, this is a prompt</h2>
+      </header>
+
+      <section class='wrapper'>
+         <p>Stuff you would display in a prompt.</p>
+      </section>
+
+      <footer class='footer'>
+        <a class='cancel'>Cancel</a>
+        <a class='submit'>Chat</a>
+      </footer>
+    </div>
 
     <!-- JS -->
     <% data.scripts.forEach(function(script) { %>
       <script src="<%= script %>"></script>
     <% }) %>
-    
+
   </body>
 </html>
