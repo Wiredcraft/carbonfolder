@@ -188,13 +188,67 @@ DropboxWrapper.service('Dropbox', ['$q', '$log', function($q, $log) {
   };
 
   /**
+   * @method getAllMedia
+   * @description returns array of filenames in media folder
+   */
+  this.getAllMedia = function(project_name, cb) {
+    var media_dir = project_name.concat('/media');
+    client.readdir(media_dir, function(err, dt) {
+      if (err) { console.error(err); cb(err); }
+      cb(dt);
+    });
+  };
+
+  /**
+   * @method getMedia
+   * @description returns a file from the media folder
+   */
+  this.getMedia = function(project_name, filename, cb) {
+    var path = project_name + '/media/' + filename;
+    client.readFile(path, function(err, content) {
+      if (err) { console.error(err); cb(err); }
+      cb(content);
+    });
+  };
+
+  /**
+   * @method fetchMedia
+   * @description returns all the media for a project
+   */
+  this.fetchMedia = function(project_name, cb) {
+      var self = this;
+      var fileData = []
+
+      this.getAllMedia(project_name, function(media) {
+          
+          (function ex(media) {
+              if (media[0] == null) { return cb(fileData); }
+
+              // Orion emit status here
+
+              self.getMedia(project_name, media[0], function(file) {
+                  var obj = { name: media[0], data: file };
+                  fileData.push(obj);
+
+                  media.shift();
+                  return ex(media);
+              });
+
+              return false;
+          })(media);
+
+      });
+  };
+
+
+  /**
    * @method createFileForProject
    * @description create file depending of project name and content type
    */
   this.createFileForProject = function(project_name, content_type, title, data, cb) {
     var filename = title;
     var filepath = project_name.concat('/content/', content_type, '/', filename);
-    console.log(filepath, data);
+    // console.log(filepath, data);
     client.writeFile(filepath, data, function(err, stat) {
       if (err) return alert(err);
       return cb(null, stat);

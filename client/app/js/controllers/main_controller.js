@@ -298,14 +298,20 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
     Context.current_type = type;
   };
 
-
   var imgG;
 
   $scope.saveImg = function(mt, dt) {
     Dropbox.writeFile(Context.current_project + '/media/' + mt + '.jpg', dt, function() {
-      console.log('Saved');
+      Orion.emit('end', 'File saved');
+      Context.refreshProjectContext(Context.current_project, true, function() {
+        // Context.current_content = null;
+        $scope.$apply();
+      });
     });
   };
+
+  // Get media
+
 
 }]);
 
