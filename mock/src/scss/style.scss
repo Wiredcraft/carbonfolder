@@ -6,8 +6,9 @@
 
 /* Colors */
 
-$primary: #5ba4e5;
-$secondary: #9fbb58;
+$primary: #0082b7;
+$secondary: #45ad3a;
+$error: #AD3A3A;
 $base: shade(desaturate($primary, 40%), 80%);
 
 /* Spacing */
@@ -17,7 +18,6 @@ $radius: 1px;
 
 /* Layout */
 
-$menu: 100px;
 $sidebar: 280px;
 $width: 1000px;
 $prompt: 660px;
@@ -220,8 +220,7 @@ textarea {
 }
 
 input:not([type=submit]),
-textarea,
-.field .value {
+textarea {
   background: #FFF;
   border: 1px solid tint($base, 85%);
   @include border-radius($radius);
@@ -249,8 +248,7 @@ textarea,
   float: right;
   a,
   .label {
-    float: left;
-    margin-left: $gutter/2;
+    margin-left: $gutter/4;
     &:before {
       @include icon();
       margin-right: $gutter/2;
@@ -277,7 +275,6 @@ textarea,
   border-right: 1px solid shade($base, 10%);
   @include clearfix();
   color: tint($base, 80%);
-  font-size: $small;
   height: 100%;
   position: fixed;
   width: $sidebar;
@@ -331,17 +328,17 @@ textarea,
     background: tint($base, 5%);
     .header {
       border-top: 1px solid $base;
-      font-size: $micro;
+      font-size: $small;
       padding: 1.5*$gutter/2 $gutter;
       input {
         @include border-radius(20px);
-        font-size: $micro;
-        padding: $gutter/4 $gutter/2;
+        font-size: $small;
+        padding: $gutter/8 $gutter/2;
         width: 50%;
       }
       a {
         @include button($primary);
-        padding: $gutter/8 $gutter/4;
+        padding: $gutter/8 $gutter/2;
       }
     }
     .body {
@@ -363,50 +360,61 @@ textarea,
 /* MAIN */
 
 #main {
-  padding: $gutter;
-  .content {
-    @include box();
-    margin-left: $sidebar + 2*$gutter;
-    max-width: 800px;
-    .header {
-      padding: 1.5*$gutter/2 $gutter;
-      h1 {
-        margin: 0;
-      }
-      a {
-        @include button($primary);
+  margin-left: $sidebar;
+  padding: 0 $gutter;
+  .header {
+    border-bottom: 1px solid tint($base, 80%);
+    padding: 1.5*$gutter/2 0;
+    .save {
+      @include button($secondary);
+      margin-right: $gutter/2;
+    }
+    .history {
+      opacity: 0.5;
+      &:hover {
+        opacity: 1;
       }
     }
+    .delete {
+      color: $error;
+    }
+  }
+  .content {
     .field {
-      border-top: 1px solid tint($base, 90%);
+      border-bottom: 1px solid tint($base, 80%);
       @include clearfix();
-      padding: 1.5*$gutter/2 $gutter;
+      padding: 1.5*$gutter/2 0;
       .label {
         color: tint($base, 60%);
-        margin-bottom: $gutter/2;
+        float: left;
+        width: 120px;
+        text-transform: uppercase;
+        font-size: $small;
       }
       .value {
         @include clearfix();
+        max-width: 800px;
+        margin-left: 140px;
+        padding: -$gutter/4;
+        div,
+        input {
+          background: transparent;
+          border: 0;
+          @include box-shadow(none);
+          display: block;
+          padding: $gutter/4;
+          
+          &:hover,
+          &:active,
+          &:focus {
+            background: #FFF;
+          }
+        }
+        input {
+          width: 100%;
+        }
       }
     }
-  }
-}
-
-/* FOOTER */
-
-#footer {
-  color: tint($base, 60%);
-  clear: both;
-  font-size: $small;
-  padding: $gutter;
-  a {
-    border-bottom: 1px solid tint($base, 80%);
-    color: tint($base, 60%);
-    margin-right: $gutter/4;
-    text-decoration: none;
-  }
-  .copyright {
-    float: right;
   }
 }
 
