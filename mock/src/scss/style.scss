@@ -319,7 +319,11 @@ textarea,
     &:active,
     &.active:hover {
 <<<<<<< HEAD
+<<<<<<< HEAD
       background: tint($base, 5%);
+=======
+      background: tint($base, 10%);
+>>>>>>> 6238868... New direction
 =======
       background: tint($base, 10%);
 >>>>>>> 6238868... New direction
@@ -333,9 +337,14 @@ textarea,
   }
   .sub {
 <<<<<<< HEAD
+<<<<<<< HEAD
     background: tint($base, 5%);
     .header {
       border-top: 1px solid $base;
+=======
+    background: tint($base, 10%);
+    .header {
+>>>>>>> 6238868... New direction
 =======
     background: tint($base, 10%);
     .header {
@@ -356,9 +365,15 @@ textarea,
     .body {
       a {
 <<<<<<< HEAD
+<<<<<<< HEAD
         border-top: 1px solid $base;
         &:hover {
           background: shade($base, 10%);
+=======
+        border-top: tint($base, 5%);
+        &:hover {
+          background: tint($base, 15%);
+>>>>>>> 6238868... New direction
 =======
         border-top: tint($base, 5%);
         &:hover {
