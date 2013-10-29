@@ -318,7 +318,11 @@ textarea,
     &.active,
     &:active,
     &.active:hover {
+<<<<<<< HEAD
       background: tint($base, 5%);
+=======
+      background: tint($base, 10%);
+>>>>>>> 6238868... New direction
       color: #FFF;
     }
     &:hover {
@@ -328,9 +332,14 @@ textarea,
     }
   }
   .sub {
+<<<<<<< HEAD
     background: tint($base, 5%);
     .header {
       border-top: 1px solid $base;
+=======
+    background: tint($base, 10%);
+    .header {
+>>>>>>> 6238868... New direction
       font-size: $micro;
       padding: 1.5*$gutter/2 $gutter;
       input {
@@ -346,9 +355,15 @@ textarea,
     }
     .body {
       a {
+<<<<<<< HEAD
         border-top: 1px solid $base;
         &:hover {
           background: shade($base, 10%);
+=======
+        border-top: tint($base, 5%);
+        &:hover {
+          background: tint($base, 15%);
+>>>>>>> 6238868... New direction
         }
         .description {
           color: tint($base, 60%);
