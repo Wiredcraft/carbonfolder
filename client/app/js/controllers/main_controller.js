@@ -294,8 +294,11 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
     Context.current_type.name = 'New type';
   };
 
-  $scope.editMode = function(type) {
-    Context.current_type = type;
+  $scope.editMode = function(content) {
+    // Context.current_type = type;
+    // var t = PhotoshopService.rawToB64(content.data);
+    // console.log('returned:', t);
+    console.log(content);
   };
 
   var imgG;
@@ -309,9 +312,6 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
       });
     });
   };
-
-  // Get media
-
 
 }]);
 

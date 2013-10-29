@@ -287,6 +287,16 @@
       return ia;
     };
 
+    /**
+     * @method rawToB64
+     * @description raw binary data to base64 image
+     */
+    // this.rawToB64 = function(dt) {
+    //   // console.log(dt);
+    //   // console.log('Start rawToB64');
+    //   return dt
+    // };
+
     // opts : canvas, img, width
     this.resize = function(opts, cb) {
       var lobes = opts.lobes || 3;
