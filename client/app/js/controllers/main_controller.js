@@ -247,7 +247,7 @@ MCtrl.controller('ProjectCtrl', ['$scope', '$location', 'User', 'Dropbox', 'Cont
 
   $scope.editMode = function(content) {
     Context.current_content = content;
-    $scope.static_content = angular.copy(Context.current_content.data['__content']);
+    Context.current_content.temp = Context.current_content.data['__content'];
   };
 
   $scope.remove = function() {

@@ -1,31 +1,37 @@
-<header class='header'>
-  <div class='options'>
-    <a class='delete' ng-click='remove()'>Delete</a>
-  </div>
-  <a class='save' ng-click='submit()'>Save now</a>
-</header>
+<section ng-hide='Context.current_content != null'>
+  <h2>Create or select content to continue...</h2>
+</section>
 
-<article class='content'>
-  <section class='field' ng-repeat='(key, field) in Context.current_content.meta.schema.properties'>
-    <div class='label'>{{ key }}</div>
-    <input type='{{ field.type }}' ng-model='Context.current_content.data[key]' />
-  </section>
-
-  <section class='field'>
-    <div class='label'>Filename</div>
-    <input type="text" ng-model="Context.current_content.meta.filename"/>
-  </section>
-
-  <section class='field body'>
-    <div class='label'>Body</div>
-    <div class='value'>
-      <moleskine bind-data="Context.current_content.data['__content']"
-                 base-content="static_content"
-                 width="550"
-                 default-mode="html"
-                 input="markdown"
-                 output="markdown"
-                 height="450"></moleskine>
+<section ng-show='Context.current_content != null'>
+  <header class='header'>
+    <div class='options'>
+      <a class='delete' ng-click='remove()'>Delete</a>
     </div>
-  </section>
-</article>
+    <a class='save' ng-click='submit()'>Save now</a>
+  </header>
+
+  <article class='content'>
+    <section class='field' ng-repeat='(key, field) in Context.current_content.meta.schema.properties'>
+      <div class='label'>{{ key }}</div>
+      <input type='{{ field.type }}' ng-model='Context.current_content.data[key]' />
+    </section>
+
+    <section class='field'>
+      <div class='label'>Filename</div>
+      <input type="text" ng-model="Context.current_content.meta.filename"/>
+    </section>
+
+    <section class='field body'>
+      <div class='label'>Body</div>
+      <div class='value'>
+        <moleskine bind-data="Context.current_content.data['__content']"
+                   base-content="Context.current_content.temp"
+                   width="550"
+                   default-mode="html"
+                   input="markdown"
+                   output="markdown"
+                   height="450"></moleskine>
+      </div>
+    </section>
+  </article>
+</section>

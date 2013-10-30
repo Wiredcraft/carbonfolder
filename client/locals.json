@@ -47,9 +47,7 @@
   "css": [
     "http://fonts.googleapis.com/css?family=Open+Sans",
     "css/normalize.css",
-    "css/font.css",
     "css/style.css",
-    "css/angular.css",
 
     "lib/moleskine/css/moleskine.css"
   ]

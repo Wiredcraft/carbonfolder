@@ -1,36 +1,48 @@
+<section ng-hide='Context.current_type != null'>
+  <h2>Create or select a type to continue...</h2>
+</section>
 
-<div id="content">
-  <div id="pane">
-    
-    <header>
-      <div class="actions">
-        <a class="add button" data-icon="a" ng-click="add()"></a>
-      </div>
-      <input type="text" name="search" placeholder="Filter by name">
-    </header>
-    
-    <nav>
-      <a ng-repeat="(key, content) in Context.types"
-         ng-click="editMode(content)"
-         ng-class="{active : Context.current_type.name == content.name}">
-        <h2>{{content.name}}</h2>
-        <small class="description"><b>Field numbers</b> {{keyNumbers(content.schema.properties)}}</small>
-      </a>
-      <!-- Informations -->
-      <div ng-show="(Context.types | objectLength) == 0">
-        You haven't created any type<br/>
-        <a class="add button" data-icon="a" ng-click="add()"></a>
-      </div>
-      <!-- ! Informations -->
-    </nav>
-  </div>
-
-  <div id="details" class="empty" ng-show="Context.current_type == null">
-    <div class="centerize">
-      Select a content
+<section ng-show='Context.current_type != null'>
+  <header class='header'>
+    <div class='options'>
+      <a class='delete' ng-click='remove()'>Delete</a>
     </div>
-  </div>
-  
+    <a class='save' ng-click='createNewContentType()'>Save</a>
+  </header>
+
+  <article class='content'>
+
+    <section class='field'>
+      <div class='label'>Type name</div>
+      <input type="text" ng-model="Context.current_type.name"/>
+    </section>
+
+    <section class='field'>
+      <h2>Add Field</h2>
+      <div class='label'>Field title</div>
+      <input type="text" ng-model="ntype.title"/>
+      <br />
+      <br />
+      <div class='label'>Type</div>
+      <select ng-options="type for type in types_available",
+              ng-model="ntype.type">
+      </select>
+      <a type="submit" class="button" ng-click="appendField()">Add</a>
+    </section>
+
+    <br />
+    <h2>Form preview</h2>
+    <div class='field' ng-repeat="(key, field) in Context.current_type.schema.properties">
+      <div class="label" for="{{key}}">{{key}}</div>
+      <input name="{{key}}" type="{{field.type}}"/>
+      <a class="delete" ng-click="deleteField(field)">Remove</a>
+    </div>
+
+  </article>
+</section>
+
+<!-- 
+<div id="content">
   <div id="details" ng-show="Context.current_type != null">
     <header>
       <div class="actions bundle">
@@ -83,11 +95,9 @@
         <a class="button" ng-click="remove()">Delete</a>
        
         
-        <!-- <pre>{{Context.current_type.schema|beautifyJson}}</pre> -->
-        <!-- <pre ng-hide="Context.current_type.schema">{{type|beautifyJson}}</pre> -->
-        
       </section>
     </section>
   </div>
 </div>
 
+ -->
