@@ -6,9 +6,9 @@
 
 /* Colors */
 
-$primary: #0082b7;
-$secondary: #45ad3a;
-$error: #AD3A3A;
+$primary: #6393FF;
+$secondary: #98CC3B;
+$error: #FF7B60;
 $base: shade(desaturate($primary, 40%), 80%);
 
 /* Spacing */
@@ -18,6 +18,7 @@ $radius: 1px;
 
 /* Layout */
 
+$label: 140px;
 $sidebar: 280px;
 $width: 1000px;
 $prompt: 660px;
@@ -148,7 +149,7 @@ body {
 }
 
 body {
-  background: tint($base, 90%);
+  background: tint($base, 98%);
   color: tint($base, 20%);
   font-family: $family;
   font-size: $size;
@@ -363,7 +364,7 @@ textarea {
   margin-left: $sidebar;
   padding: 0 $gutter;
   .header {
-    border-bottom: 1px solid tint($base, 80%);
+    border-bottom: 1px solid tint($base, 90%);
     padding: 1.5*$gutter/2 0;
     .save {
       @include button($secondary);
@@ -381,29 +382,27 @@ textarea {
   }
   .content {
     .field {
-      border-bottom: 1px solid tint($base, 80%);
+      border-bottom: 1px solid tint($base, 90%);
       @include clearfix();
       padding: 1.5*$gutter/2 0;
       .label {
         color: tint($base, 60%);
         float: left;
-        width: 120px;
+        width: $label;
         text-transform: uppercase;
         font-size: $small;
       }
       .value {
-        @include clearfix();
         max-width: 800px;
-        margin-left: 140px;
-        padding: -$gutter/4;
-        div,
+        margin-left: $label + $gutter;
+        .editable,
         input {
           background: transparent;
           border: 0;
           @include box-shadow(none);
           display: block;
+          margin: -$gutter/4;
           padding: $gutter/4;
-          
           &:hover,
           &:active,
           &:focus {
