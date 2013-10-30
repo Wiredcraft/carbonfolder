@@ -68,6 +68,24 @@ app.get('/authenticate/:code', function(req, res) {
   });
 });
 
+app.post('/decode', function(req, res) {
+  console.log('decode:', req.body);
+  var string = req.body.data;
+  var regex = /^data:.+\/(.+);base64,(.*)$/;
+  var matches = string.match(regex);
+  var ext = matches[1];
+  var data = matches[2];
+  var buffer = new Buffer(data, 'base64');
+  res.send(buffer);
+});
+
+app.post('/encode', function(req, res) {
+  console.log('encode:', req.body);
+  var data = req.body;
+  var base64data = new Buffer(data).toString('base64');
+  res.send(base64data);
+});
+
 var port = process.env.PORT || config.port || 9998;
 
 app.listen(port, null, function (err) {

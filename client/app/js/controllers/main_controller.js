@@ -295,11 +295,11 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
   };
 
   $scope.editMode = function(content) {
-    PhotoshopService.rawToB64(content.data, function(data) {
+    // PhotoshopService.rawToB64(content.data, function(data) {
       // TO DO, NOT WORKING
-      console.log(data);
+      // console.log(data);
       // window.open('data:img/png;base64,'+data);
-    });
+    // });
   };
 
   var imgG;
