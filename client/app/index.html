@@ -36,9 +36,9 @@
     <nav id='navigation' ng-controller="NavbarCtrl">
 
       <a href='/#/' class='logo'>Box CMS</a>
-      <a href='/#/' class='content' ng-class='{active:isActive("#/")}'>Content</a>
 
-      <nav class='sub' ng-show='isActive("#/")' ng-controller="ProjectCtrl">
+      <a href='/#/' class='content' ng-class='{active:isActive("#/")}'>Content</a>
+        <nav class='sub' ng-show='isActive("#/")' ng-controller="ProjectCtrl">
         <header class='header'>
           <div class='options'>
             <a href=''>Add</a>
@@ -55,7 +55,7 @@
           </a>
 
           <!-- IF no Types -->
-          <a ng-show='(Content.types | objectLength) == 0'
+          <a ng-show='(Context.types | objectLength) == 0'
              href='#/types'>
             No types, click to create a type
             <span class='description'>You need at least 1 type to create content</span>
@@ -69,13 +69,29 @@
           </a>
 
         </section>
-      </nav>
+        </nav>
 
       <a href='/#/medias' class='media' ng-class='{active:isActive("#/medias")}'>Media</a>
 
       <a href='/#/types' class='settings' ng-class='{active:isActive("#/types")}'>Settings</a>
+        <nav class='sub' ng-show='isActive("#/types")'>
+        <header class='header'>
+          <div class='options'>
+            <a href='' ng-click='createNewProject()'>New</a>
+          </div>
+          <select ng-model='Context.current_project'
+                  ng-options='project for project in Context.projects'>
+          </select>
+        </header>
+        <section class='body'>
+          <a href='' ng-click='deleteProject();'>Delete {{ Context.current_project }}</a>
+          <a href='' ng-click='refreshProject();'>Refresh {{ Context.current_project }}</a>
+        </section>
+        </nav>
 
-      <a href='/#/user' class='user'><img src='/assets/images/hunvreus.jpeg' alt='hunvreus' /> {{ User.get().name }}</a>
+      <a href='/#/user' class='user'><img src='/assets/images/hunvreus.jpeg' alt='{{User.get().name}}' />
+        {{ User.get().name }}
+      </a>
     </nav>
 
     <!-- Main View -->
