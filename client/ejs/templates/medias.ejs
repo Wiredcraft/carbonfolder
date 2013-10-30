@@ -10,7 +10,7 @@
     </header>
     
     <nav>
-      <a href="#" ng-repeat="content in Context.bulk_medias | filter:fts" ng-click="editMode(content)">
+      <a ng-repeat="content in Context.bulk_medias | filter:fts" ng-click="editMode(content)">
         <h2>{{content.name}}</h2>
         <small class="description"><b>Type</b> {{content.meta.type}}</small>
       </a>

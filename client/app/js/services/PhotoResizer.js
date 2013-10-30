@@ -121,11 +121,13 @@
       };
 
       $scope.psSaveImg = function() {
-        var img_dt = PhotoshopService.b64ToRaw(Context.canvas_el.toDataURL());
-
-        $scope.save({
-          meta : $scope.imgName, // or uploaded file's name
-          data : img_dt
+        PhotoshopService.b64ToRaw(Context.canvas_el.toDataURL(), function(data) {
+          var img_dt = data;
+          $scope.save({
+            meta : $scope.imgName, // or uploaded file's name
+            data : img_dt
+          });
+          $scope.$apply();
         });
       };
 
@@ -273,29 +275,29 @@
      * @method b64ToRaw
      * @description base64 image to raw binary data
      */
-    this.b64ToRaw = this.dataUrlToRaw = function(dt) {      
-      if (typeof atob === 'undefined')
-        return cb(new Error('Atob not available'));
-      
-      var byteString = atob(dt.split(',')[1]);
-      var ab         = new ArrayBuffer(byteString.length);
-      var ia         = new Uint8Array(ab);
-      
-      for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-      }
-      return ia;
+    this.b64ToRaw = this.dataUrlToRaw = function(dt, cb) {
+      var obj = { data: dt };
+      // console.log(dt);
+      $http.post('http://127.0.0.1:9998/decode', obj).success(function(res) {
+        return cb(res);
+      }).error(function(err) {
+        return cb('Error!');
+      });
     };
 
     /**
      * @method rawToB64
      * @description raw binary data to base64 image
      */
-    // this.rawToB64 = function(dt) {
-    //   // console.log(dt);
-    //   // console.log('Start rawToB64');
-    //   return dt
-    // };
+    this.rawToB64 = function(dt, cb) {
+      // TO DO NOT WORKING
+      $http.post('http://127.0.0.1:9998/encode', dt).success(function(res) {
+        return cb(res);
+      }).error(function(err) {
+        return cb('Error!');
+      });
+
+    };
 
     // opts : canvas, img, width
     this.resize = function(opts, cb) {
