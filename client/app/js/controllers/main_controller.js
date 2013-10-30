@@ -1,8 +1,13 @@
 
 var MCtrl = angular.module('MainController', []);
 
-MCtrl.controller('NavbarCtrl', ['$scope', '$route', '$location', function($scope, $route, $location) {
+MCtrl.controller('NavbarCtrl', ['$scope', '$route', '$location', 'Context', function($scope, $route, $location, Context) {
   $scope.isActive = function(path) { return path.substring(1) == $location.path() };
+
+  $scope.debugMe = function() {
+    console.log(Context);
+  };
+
 }]);
 
 MCtrl.controller('NopCtrl', [function() {}]);
@@ -234,7 +239,7 @@ MCtrl.controller('ProjectCtrl', ['$scope', '$location', 'User', 'Dropbox', 'Cont
     Context.current_content.meta.schema   = content_type.schema;
     Context.current_content.meta.type     = content_type.name;
     Context.current_content.data          = {};
-    $scope.addPopover                     = false;
+    $scope.showTypes                      = false;
     $scope.static_content = '';
   };
 

@@ -39,59 +39,90 @@
 
       <a href='/#/' class='content' ng-class='{active:isActive("#/")}'>Content</a>
         <nav class='sub' ng-show='isActive("#/")' ng-controller="ProjectCtrl">
-        <header class='header'>
-          <div class='options'>
-            <a href=''>Add</a>
-          </div>
-          <input type='text' placeholder='Filter by keyword' ng-model='fts' />
-        </header>
-        <section class='body'>
-          
-          <a ng-repeat='content in Context.bulk_contents | filter:fts'
-             ng-click='editMode(content)'>
-             <!-- ng-class='{active : content.meta.filename == Context.current_content.meta.filename}' -->
-            {{ content.meta.filename }}
-            <span class='description'><b>Type:</b> {{ content.meta.type }}</span>
-          </a>
+          <header class='header'>
+            <div class='options'>
+              <a href='' ng-click='showTypes = !showTypes'>Add</a>
+            </div>
+            <input type='text' placeholder='Filter by keyword' ng-model='contentSearch' />
+          </header>
+          <header class='header' ng-show='showTypes'>
+            <a href='' ng-repeat='(key, dt) in Context.types' ng-click='add(dt);'>
+              Add {{ key }}
+            </a>
+          </header>
+          <section class='body'>
+            
+            <a ng-repeat='content in Context.bulk_contents | filter:contentSearch'
+               ng-click='editMode(content)'>
+               <!-- ng-class='{active : content.meta.filename == Context.current_content.meta.filename}' -->
+              {{ content.meta.filename }}
+              <span class='description'><b>Type:</b> {{ content.meta.type }}</span>
+            </a>
 
-          <!-- IF no Types -->
-          <a ng-show='(Context.types | objectLength) == 0'
-             href='#/types'>
-            No types, click to create a type
-            <span class='description'>You need at least 1 type to create content</span>
-          </a>
+            <!-- IF no Types -->
+            <a ng-show='(Context.types | objectLength) == 0'
+               href='#/types'>
+              No types, click to create a type
+              <span class='description'>You need at least 1 type to create content</span>
+            </a>
 
-          <!-- IF no Content -->
-          <a ng-show='(Context.types | objectLength) != 0 && Context.bulk_contents.length == 0'
-             ng-click='add()'>
-             No content yet! Click to create new content
-             <span class='description'>Time to get started!</span>
-          </a>
+            <!-- IF no Content -->
+            <a ng-show='(Context.types | objectLength) != 0 && Context.bulk_contents.length == 0'
+               ng-click='showTypes = !showTypes'>
+               No content yet! Click to create new content
+               <span class='description'>Time to get started!</span>
+            </a>
 
-        </section>
+          </section>
         </nav>
 
       <a href='/#/medias' class='media' ng-class='{active:isActive("#/medias")}'>Media</a>
 
       <a href='/#/types' class='settings' ng-class='{active:isActive("#/types")}'>Settings</a>
-        <nav class='sub' ng-show='isActive("#/types")'>
-        <header class='header'>
-          <div class='options'>
-            <a href='' ng-click='createNewProject()'>New</a>
-          </div>
-          <select ng-model='Context.current_project'
-                  ng-options='project for project in Context.projects'>
-          </select>
-        </header>
-        <section class='body'>
-          <a href='' ng-click='deleteProject();'>Delete {{ Context.current_project }}</a>
-          <a href='' ng-click='refreshProject();'>Refresh {{ Context.current_project }}</a>
-        </section>
+<!--         <nav class='sub' ng-show='isActive("#/types")'>
+          <header class='header'>
+            <div class='options'>
+              <a href='' ng-click='createNewProject()'>New</a>
+            </div>
+            <select ng-model='Context.current_project'
+                    ng-options='project for project in Context.projects'>
+            </select>
+          </header>
+          <section class='body'>
+            <a href='' ng-click='deleteProject();'>Delete {{ Context.current_project }}</a>
+            <a href='' ng-click='refreshProject();'>Refresh {{ Context.current_project }}</a>
+          </section>
+        </nav> -->
+        <nav class='sub' ng-show='isActive("#/types")' ng-controller="TypesCtrl">
+          <header class='header'>
+            <div class='options'>
+              <a href='' ng-click='add()'>New</a>
+            </div>
+            <input type='text' placeholder='Filter by keyword' ng-model='typeSearch' />
+          </header>
+          <section class='body'>
+            
+            <a ng-repeat='(key, type) in Context.types | filter:typeSearch'
+               ng-click='editMode(type)'>
+              {{ type.name }}
+              <span class='description'><b>Fields:</b> {{ keyNumbers(type.schema.properties) }}</span>
+            </a>
+
+            <!-- IF no Types -->
+            <a ng-show='(Context.types | objectLength) == 0'
+               ng-click='add()' href=''>
+              No types, click to create a type
+              <span class='description'>You need at least 1 type to create content</span>
+            </a>
+
+          </section>
         </nav>
 
       <a href='/#/user' class='user'><img src='/assets/images/hunvreus.jpeg' alt='{{User.get().name}}' />
         {{ User.get().name }}
       </a>
+
+      <a href='' ng-click='debugMe()'><code>Console.log(Context)</code></a>
     </nav>
 
     <!-- Main View -->
