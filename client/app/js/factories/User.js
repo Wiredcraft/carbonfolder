@@ -24,6 +24,10 @@ UserModel.factory('User', ['$rootScope', function($rootScope) {
   User.get = function() {
     return user;
   };
+
+  User.out = function() {
+    user = false;
+  };
   
   return User;
 }]);

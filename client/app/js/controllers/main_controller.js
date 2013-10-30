@@ -100,11 +100,16 @@ MCtrl.controller('MainCtrl', ['$scope', '$rootScope', 'User', 'Dropbox', 'Contex
  * @description Dropbox Login page
  * @author Alexandre Strzelewicz <as@unitech.io>
  */
-MCtrl.controller('LoginCtrl', ['$scope', 'Dropbox', 'User', function($scope, Dropbox, User) {
+MCtrl.controller('LoginCtrl', ['$scope', 'Dropbox', 'User', '$location', function($scope, Dropbox, User, $location) {
   $scope.authUser = function() {
     Dropbox.auth(function(err, user) {
       User.set(user);
     });
+  };
+
+  $scope.logout = function() {
+    User.out();
+    $location.path('/');
   };
 }]);
 
