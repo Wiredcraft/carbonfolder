@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html x-ng-app="DCMS">
   <head>
-    <title>DCMS</title>
-    
+    <title>Box CMS</title>
+
     <!-- Meta -->
     <meta charset="utf-8">
-    <meta name="description" content="Dropbox Content Management System">
+    <meta name="description" content="Box Content Management System">
     <meta name="viewport" content="width=device-width">
     
     <!-- Icons -->
@@ -29,61 +29,84 @@
       <link rel="stylesheet" href="lib/moleskine/css/moleskine.css">
     
 
-    
   </head>
+
   <body ng-controller="MainCtrl">
-    <div id="app">
-      
-      <header id="header">        
-        <nav>
-          <a href="#help" class="help">Help</a>
-          <a href="#user" class="user">{{User.get().name}} <i>{{User.get().privateBytes | bytesToMb}} / {{User.get().usedQuota | bytesToMb}}</i></a>
 
-        </nav>
-        <a href="#" id="logo">focused.io</a>
-      </header>
+    <nav id='navigation' ng-controller="NavbarCtrl">
 
-      
-      <section id="main">
+      <a href='/#/' class='logo'>Box CMS</a>
+      <a href='/#/' class='content' ng-class='{active:isActive("#/")}'>Content</a>
 
-        <nav id="menu" ng-controller="NavbarCtrl">
-
-          <header>
-            <div id="logo">
-              <!-- LOGO -->
-            </div>
-
-            <select ng-model="Context.current_project"
-                    class="project-select"
-                    ng-options="project for project in Context.projects">
-            </select>
-
-            <div style="float : right; margin-right : 5px;">
-              <a class="settings" data-icon="a" ng-click="createNewProject()"></a>
-              <a class="settings" data-icon="s" ng-click="projectPopover = !projectPopover"></a>
-              <div class="popover popover-edit-project" ng-show="projectPopover">
-                <a ng-click="deleteProject(); projectPopover = false">Delete Project</a>
-                <a ng-click="refreshProject(); projectPopover = false">Force Refresh</a>
-              </div>
-            </div>
-                        
-          </header>
+      <nav class='sub' ng-show='isActive("#/")' ng-controller="ProjectCtrl">
+        <header class='header'>
+          <div class='options'>
+            <a href=''>Add</a>
+          </div>
+          <input type='text' placeholder='Filter by keyword' ng-model='fts' />
+        </header>
+        <section class='body'>
           
-          <a href="/#/" class="apps" ng-class="{active : isActive('#/')}" data-icon="A">Posts</a>
-          <a href="/#/medias" class="servers" ng-class="{active : isActive('#/medias')}" data-icon="S">Media</a>
-          <a href="/#/types" class="settings" data-icon="s" ng-class="{active : isActive('#/types')}">Types</a>
-          <a href="/#/pusher" class="settings" data-icon="l" ng-class="{active : isActive('#/pusher')}">Pusher</a>
-        </nav>
+          <a ng-repeat='content in Context.bulk_contents | filter:fts'
+             ng-click='editMode(content)'>
+             <!-- ng-class='{active : content.meta.filename == Context.current_content.meta.filename}' -->
+            {{ content.meta.filename }}
+            <span class='description'><b>Type:</b> {{ content.meta.type }}</span>
+          </a>
 
-        <ng-view></ng-view>
-        
-                
-      </section>
-    </div>
+          <!-- IF no Types -->
+          <a ng-show='(Content.types | objectLength) == 0'
+             href='#/types'>
+            No types, click to create a type
+            <span class='description'>You need at least 1 type to create content</span>
+          </a>
 
+          <!-- IF no Content -->
+          <a ng-show='(Context.types | objectLength) != 0 && Context.bulk_contents.length == 0'
+             ng-click='add()'>
+             No content yet! Click to create new content
+             <span class='description'>Time to get started!</span>
+          </a>
+
+        </section>
+      </nav>
+
+      <a href='/#/medias' class='media' ng-class='{active:isActive("#/medias")}'>Media</a>
+
+      <a href='/#/types' class='settings' ng-class='{active:isActive("#/types")}'>Settings</a>
+
+      <a href='/#/user' class='user'><img src='/assets/images/hunvreus.jpeg' alt='hunvreus' /> {{ User.get().name }}</a>
+    </nav>
+
+    <!-- Main View -->
+    <section id='main'>
+      <ng-view></ng-view>
+    </section>
+
+    <!-- Orion Feedback Messages -->
     <section id="messages">
       <feedback></feedback>
     </section>
+
+    <!-- OVERLAY & MODAL -->
+    <div id='overlay'></div>
+    <div id='modal'>
+      <header class='header'>
+        <div class='options'>
+          <a class='close'>Close</a>
+        </div>
+        <h2>Hello there, this is a prompt</h2>
+      </header>
+
+      <section class='wrapper'>
+         <p>Stuff you would display in a prompt.</p>
+      </section>
+
+      <footer class='footer'>
+        <a class='cancel'>Cancel</a>
+        <a class='submit'>Chat</a>
+      </footer>
+    </div>
 
     <!-- JS -->
     
@@ -151,6 +174,7 @@
     
       <script src="lib/moleskine/js/moleskine-angular.js"></script>
     
-    
+
   </body>
+
 </html>
