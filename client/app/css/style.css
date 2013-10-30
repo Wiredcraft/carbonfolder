@@ -604,3 +604,28 @@ body.modal #modal,
 body.modal #overlay {
   display: block;
 }
+
+/* line 488, ../../scss/style.scss */
+#messages {
+  position: fixed;
+  bottom: 0px;
+  left: 50%;
+  margin-left: -150px;
+}
+/* line 493, ../../scss/style.scss */
+#messages #feedback-popup {
+  -webkit-border-radius: 5px 5px 0px 0px;
+  border-radius: 5px 5px 0px 0px;
+  color: white;
+  padding: 5px;
+  width: 300px;
+  text-align: center;
+}
+/* line 501, ../../scss/style.scss */
+#messages .loading {
+  background-color: blue;
+}
+/* line 504, ../../scss/style.scss */
+#messages .end {
+  background-color: green;
+}

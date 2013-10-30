@@ -484,3 +484,24 @@ body.modal {
     display: block;
   }
 }
+
+#messages {
+  position : fixed;
+  bottom : 0px;
+  left : 50%;
+  margin-left : -150px;
+  #feedback-popup {
+    -webkit-border-radius: 5px 5px 0px 0px;
+    border-radius: 5px 5px 0px 0px;
+    color : white;
+    padding : 5px;
+    width : 300px;
+    text-align : center;
+  }
+  .loading {
+    background-color : blue;
+  }
+  .end {
+    background-color : green;
+  }
+}
