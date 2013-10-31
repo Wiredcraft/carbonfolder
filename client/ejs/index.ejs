@@ -106,6 +106,12 @@
             <span class='description'><b>Type: </b> {{ content.name | filesExt }}</span>
           </a>
 
+          <!-- IF no Media -->
+          <a ng-show='Context.bulk_medias.length == 0' ng-click='add()' href=''>
+            No media items found
+            <span class='description'>Click to add a new media item</span>
+          </a>
+
           </section>
         </nav>
 
@@ -135,7 +141,9 @@
           </section>
         </nav>
 
-      <a href='#/pusher' class='user'><img ng-src='{{ User.get().email | gravatar }}' alt='{{User.get().name}}' />
+      <a href='#/pusher' class='pusher' ng-class='{active:isActive("#/pusher")}'>Push to Github</a>
+
+      <a href='#/user' class='user'><img ng-src='{{ User.get().email | gravatar }}' alt='{{User.get().name}}' />
         {{ User.get().name }}
       </a>
 

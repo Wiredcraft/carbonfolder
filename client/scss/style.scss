@@ -304,6 +304,9 @@ textarea {
     &.settings:before {
       content: 's';
     }
+    &.pusher:before {
+      content: 'g';
+    }
     &.user {
       /*position: fixed;*/
       img {
