@@ -159,6 +159,23 @@
         </nav>
 
       <a href='/#/medias' class='media' ng-class='{active:isActive("#/medias")}'>Media</a>
+        <nav class='sub' ng-show='isActive("#/medias")' ng-controller='MediaCtrl'>
+          <header class='header'>
+            <div class='options'>
+              <a href='' ng-click='add()'>Add</a>
+            </div>
+            <input type='text' placeholder='Filter by keyword' ng-model='mediaSearch' />
+          </header>
+          <section class='body'>
+            
+          <a ng-repeat="content in Context.bulk_medias | filter: mediaSearch"
+             ng-click='editMode(content)' href=''>
+            {{ content.name }}
+            <span class='description'><b>Type: </b> {{ content.meta.type }}</span>
+          </a>
+
+          </section>
+        </nav>
 
       <a href='/#/types' class='settings' ng-class='{active:isActive("#/types")}'>Settings</a>
         <nav class='sub' ng-show='isActive("#/types")' ng-controller="TypesCtrl">
