@@ -1,6 +1,20 @@
 
 var Filters = angular.module('Filters', []);
 
+Filters.filter('filesName', function() {
+  return function(filename) {
+    var x = filename.split('.');
+    return x[0];
+  };
+});
+
+Filters.filter('filesExt', function() {
+  return function(filename) {
+    var x = filename.split('.');
+    return x[1];
+  };
+});
+
 Filters.filter('gravatar', function() {
   return function(email) {
     if (email === undefined || email === null) { return 'http://www.gravatar.com/avatar/00000000000000000000000000000000?d=mm' };

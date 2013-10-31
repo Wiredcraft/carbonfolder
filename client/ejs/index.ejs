@@ -102,8 +102,8 @@
             
           <a ng-repeat="content in Context.bulk_medias | filter: mediaSearch"
              ng-click='editMode(content)' href=''>
-            {{ content.name }}
-            <span class='description'><b>Type: </b> {{ content.meta.type }}</span>
+            {{ content.name | filesName }}
+            <span class='description'><b>Type: </b> {{ content.name | filesExt }}</span>
           </a>
 
           </section>

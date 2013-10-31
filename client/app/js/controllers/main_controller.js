@@ -309,6 +309,7 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
   };
 
   $scope.editMode = function(content) {
+    // console.log(content)
     // PhotoshopService.rawToB64(content.data, function(data) {
       // TO DO, NOT WORKING
       // console.log(data);
