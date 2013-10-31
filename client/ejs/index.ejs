@@ -26,7 +26,7 @@
 
   </head>
 
-  <body ng-controller="MainCtrl">
+  <body ng-controller="MainCtrl" ng-cloak>
 
     <nav id='navigation' ng-controller="NavbarCtrl">
 
@@ -118,10 +118,9 @@
           </section>
         </nav>
 
-      <a href='#/pusher' class='user'><img src='{{ User.get().email | gravatar }}' alt='{{User.get().name}}' />
+      <a href='#/pusher' class='user'><img ng-src='{{ User.get().email | gravatar }}' alt='{{User.get().name}}' />
         {{ User.get().name }}
       </a>
-
 
       <!-- <a href='' ng-click='debugMe()'><code>Console.log(Context)</code></a> -->
       <!-- <a href='' ng-click='logUser()'><code>Console.log(User)</code></a> -->

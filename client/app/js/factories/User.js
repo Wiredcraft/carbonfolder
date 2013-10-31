@@ -11,7 +11,7 @@ UserModel.factory('User', ['$rootScope', function($rootScope) {
   var User = {};
 
   var user = false;
-  
+
   User.set = function(us) {
     user = us;
     $rootScope.$broadcast('user:logged', user);
