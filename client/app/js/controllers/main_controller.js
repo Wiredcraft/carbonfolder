@@ -34,6 +34,10 @@ MCtrl.controller('MainCtrl', ['$scope', '$rootScope', 'User', 'Dropbox', 'Contex
     });
   });
 
+  $scope.logUser = function() {
+    console.log($rootScope.User)
+  };
+
   $scope.refreshProject = function() {
     Context.refreshProjectContext(Context.current_project, true, function() {
       $rootScope.$apply();
