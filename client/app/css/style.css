@@ -633,3 +633,28 @@ body.modal #overlay {
 #messages .end {
   background-color: green;
 }
+
+/* Other */
+/* line 513, ../../scss/style.scss */
+.btn {
+  background: #6393ff;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  -o-border-radius: 2px;
+  border-radius: 2px;
+  font-size: 80%;
+  padding: 6.66667px 20px;
+  text-transform: uppercase;
+  color: #FFF;
+  margin-right: 5px;
+}
+/* line 68, ../../scss/style.scss */
+.btn:hover {
+  background: #729dff;
+  text-decoration: none;
+}
+/* line 73, ../../scss/style.scss */
+.btn:active, .btn.active {
+  background: #729dff;
+}

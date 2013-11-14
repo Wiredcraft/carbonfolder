@@ -508,3 +508,9 @@ body.modal {
     background-color : green;
   }
 }
+
+/* Other */
+.btn {
+  @include button($primary);
+  margin-right: 5px;
+}

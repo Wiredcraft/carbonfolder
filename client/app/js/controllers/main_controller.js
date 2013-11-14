@@ -303,14 +303,13 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
 
   $scope.Context = Context;
 
-  $scope.add = function() {
-    Context.current_type = {};
-    Context.current_type.name = 'New type';
-  };
+  $scope.add = function() {};
 
   $scope.editMode = function(content) {
     PhotoshopService.rawToB64(content.data, function(data) {
-      var imageData = 'data:image/png;base64,'+data;
+      var x = content.name.split('.');
+      var ext = x[1];
+      var imageData = 'data:image/'+ext+';base64,'+data;
       content.image = PhotoshopService.dataUrlToImage(imageData);
       PhotoshopService.loadSavedImg(content);
     });

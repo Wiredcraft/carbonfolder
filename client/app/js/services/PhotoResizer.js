@@ -222,11 +222,12 @@ function Base64Encoder()
         '</div>' +
         '<br/><div id="ps-toolbar" ng-show="Context.current_image">' +
         '<input type="text" placeholder="Image Name" ng-model="imgName" ng-show="Context.current_image" ng-hide="Context.cropping || Context.resizing"><br/>' +
-        '<a class="button" ng-hide="Context.resizing" ng-click="cropImage()">Crop</a>' + 
-        '<a class="button" ng-hide="Context.cropping" ng-click="resizeImage()">Resize</a>' +
-        '<a class="button" ng-hide="Context.cropping || Context.resizing" ng-click="undo()">Undo</a>' +
-        '<a class="button" ng-hide="Context.cropping || Context.resizing" ng-click="redo()">Redo</a>' +
-        '<a class="button" ng-hide="Context.cropping || Context.resizing" ng-click="psSaveImg()">Save</a>' +
+        '<a class="btn" ng-hide="Context.resizing" ng-click="cropImage()">Crop</a>' + 
+        '<a class="btn" ng-hide="Context.cropping" ng-click="resizeImage()">Resize</a>' +
+        '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="undo()">Undo</a>' +
+        '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="redo()">Redo</a>' +
+        '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="psSaveImg()">Save</a>' +
+        '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="log()">LOG</a>' +
         '</div>' +
         '</div>' +
         '<br/>' + 
@@ -258,6 +259,10 @@ function Base64Encoder()
         Context.cropping = !Context.cropping;
       };
       
+      $scope.log = function() {
+        console.log(Context.current_image);
+      };
+
       $scope.undo = function() {
         Context.undo();
         PhotoshopService.redrawImg(Context.canvas_el,
@@ -396,8 +401,8 @@ function Base64Encoder()
      * @description place uploaded image onto canvas
      */
     this.loadSavedImg = function(content) {
-      Context.current_image = content;
       var img = content.image;
+      Context.current_image = img;
 
       var canvas = document.getElementById('originalImage');
       var ctx = canvas.getContext('2d');
