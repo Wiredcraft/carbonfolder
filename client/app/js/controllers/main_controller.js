@@ -309,17 +309,18 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
   };
 
   $scope.editMode = function(content) {
-    // console.log(content)
-    // PhotoshopService.rawToB64(content.data, function(data) {
+    console.log(content)
+    PhotoshopService.rawToB64(content.data, function(data) {
       // TO DO, NOT WORKING
       // console.log(data);
-      // window.open('data:img/png;base64,'+data);
-    // });
+      window.open('data:img/png;base64,'+data);
+    });
   };
 
   var imgG;
 
   $scope.saveImg = function(mt, dt) {
+    Orion.emit('loading', 'Creating File');
     Dropbox.writeFile(Context.current_project + '/media/' + mt, dt, function() {
       Orion.emit('end', 'File saved');
       Context.refreshProjectContext(Context.current_project, true, function() {

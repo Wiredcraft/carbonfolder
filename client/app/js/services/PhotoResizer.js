@@ -1,5 +1,157 @@
 /* global angular, jQuery */
+function Base64Encoder()
+{
+  // do nothing
+}
+{
+  // constants
 
+  Base64Encoder.Base64DigitsAsString = 
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" 
+    + "abcdefghijklmnopqrstuvwxyz"
+    + "0123456789"
+    + "+/";
+
+  // static methods
+
+  Base64Encoder.convertBase64StringToBytes = function(base64StringToConvert)
+  {
+    // Convert each four sets of six bits (sextets, or Base 64 digits)
+    // into three sets of eight bits (octets, or bytes)
+
+    var returnBytes = [];
+
+    var bytesPerSet = 3;
+    var base64DigitsPerSet = 4;
+    var base64DigitsAll = Base64Encoder.Base64DigitsAsString;
+
+    var indexOfEqualsSign = base64StringToConvert.indexOf("=");
+
+    if (indexOfEqualsSign >= 0)
+    {
+      base64StringToConvert = base64StringToConvert.substring
+      (
+        0, 
+        indexOfEqualsSign
+      );
+    }
+
+    var numberOfBase64DigitsToConvert = base64StringToConvert.length;
+
+    var numberOfFullSets = Math.floor
+    (
+      numberOfBase64DigitsToConvert / base64DigitsPerSet
+    );
+
+    var numberOfBase64DigitsInFullSets = 
+      numberOfFullSets * base64DigitsPerSet;
+
+    var numberOfBase64DigitsLeftAtEnd = 
+      numberOfBase64DigitsToConvert - numberOfBase64DigitsInFullSets;
+
+    for (var s = 0; s < numberOfFullSets; s++)
+    {
+      var d = s * base64DigitsPerSet;
+
+      var valueToEncode = 
+        (base64DigitsAll.indexOf(base64StringToConvert[d]) << 18)
+        | (base64DigitsAll.indexOf(base64StringToConvert[d + 1]) << 12)
+        | (base64DigitsAll.indexOf(base64StringToConvert[d + 2]) << 6)
+        | (base64DigitsAll.indexOf(base64StringToConvert[d + 3]));
+
+      returnBytes.push((valueToEncode >> 16) & 0xFF);
+      returnBytes.push((valueToEncode >> 8) & 0xFF);
+      returnBytes.push((valueToEncode) & 0xFF);
+    } 
+
+    var d = numberOfFullSets * base64DigitsPerSet;
+
+    if (numberOfBase64DigitsLeftAtEnd > 0)
+    {
+      var valueToEncode = 0;
+
+      for (var i = 0; i < numberOfBase64DigitsLeftAtEnd; i++)
+      {
+        var digit = base64StringToConvert[d + i];
+        var digitValue = base64DigitsAll.indexOf(digit);
+        var bitsToShift = (18 - 6 * i);
+        var digitValueShifted = digitValue << bitsToShift;
+
+        valueToEncode = 
+          valueToEncode
+          | digitValueShifted;
+      }
+
+
+      for (var b = 0; b < numberOfBase64DigitsLeftAtEnd; b++)
+      {
+        var byteValue = (valueToEncode >> (16 - 8 * b)) & 0xFF;
+        if (byteValue > 0)
+        {
+          returnBytes.push(byteValue);
+        }
+      }
+    }
+
+    return returnBytes;
+  }
+
+  Base64Encoder.convertBytesToBase64String = function(bytesToEncode)
+  {
+    // Encode each three sets of eight bits (octets, or bytes)
+    // as four sets of six bits (sextets, or Base 64 digits)
+
+    var returnString = "";
+
+    var bytesPerSet = 3;
+    var base64DigitsPerSet = 4;
+    var base64DigitsAsString = Base64Encoder.Base64DigitsAsString;
+
+    var numberOfBytesToEncode = bytesToEncode.length;
+    var numberOfFullSets = Math.floor(numberOfBytesToEncode / bytesPerSet);
+    var numberOfBytesInFullSets = numberOfFullSets * bytesPerSet;
+    var numberOfBytesLeftAtEnd = numberOfBytesToEncode - numberOfBytesInFullSets;
+
+    for (var s = 0; s < numberOfFullSets; s++)
+    {
+      var b = s * bytesPerSet;
+
+      var valueToEncode = 
+        (bytesToEncode[b] << 16)
+        | (bytesToEncode[b + 1] << 8)
+        | (bytesToEncode[b + 2]);
+
+      returnString += base64DigitsAsString[((valueToEncode & 0xFC0000) >>> 18)];
+      returnString += base64DigitsAsString[((valueToEncode & 0x03F000) >>> 12)];
+      returnString += base64DigitsAsString[((valueToEncode & 0x000FC0) >>> 6)];
+      returnString += base64DigitsAsString[((valueToEncode & 0x00003F))];
+    } 
+
+    var b = numberOfFullSets * bytesPerSet;
+
+    if (numberOfBytesLeftAtEnd == 1)
+    {
+      var valueToEncode = (bytesToEncode[b] << 16);
+
+      returnString += base64DigitsAsString[((valueToEncode & 0xFC0000) >>> 18)];
+      returnString += base64DigitsAsString[((valueToEncode & 0x03F000) >>> 12)];
+      returnString += "==";
+    }   
+    else if (numberOfBytesLeftAtEnd == 2)
+    {
+      var valueToEncode = 
+        (bytesToEncode[b] << 16)
+        | (bytesToEncode[b + 1] << 8);
+
+      returnString += base64DigitsAsString[((valueToEncode & 0xFC0000) >>> 18)];
+      returnString += base64DigitsAsString[((valueToEncode & 0x03F000) >>> 12)];
+      returnString += base64DigitsAsString[((valueToEncode & 0x000FC0) >>> 6)];
+      returnString += "=";
+    }
+
+    return returnString;
+  }
+}
 /**
  * @doc module
  * @id PhotoResizeModule
@@ -127,7 +279,6 @@
             meta : $scope.imgName, // or uploaded file's name
             data : img_dt
           });
-          $scope.$apply();
         });
       };
 
@@ -149,6 +300,7 @@
               PhotoshopService.redrawImg(Context.canvas_el,
                                          Context.ctx,
                                          image);              
+              console.log('ctx', Context);
               Context.push_image(image);
             };
             
@@ -276,13 +428,19 @@
      * @description base64 image to raw binary data
      */
     this.b64ToRaw = this.dataUrlToRaw = function(dt, cb) {
-      var obj = { data: dt };
-      // console.log(dt);
-      $http.post('http://127.0.0.1:9998/decode', obj).success(function(res) {
-        return cb(res);
-      }).error(function(err) {
-        return cb('Error!');
-      });
+      // Saves Viewable image
+      // var binaryImg = atob(dt.split(',')[1]);
+      // var length = binaryImg.length;
+      // var ab = new ArrayBuffer(length);
+      // var ua = new Uint8Array(ab);
+      // for (var i = 0; i < length; i++) {
+      //     ua[i] = binaryImg.charCodeAt(i);
+      // }
+      // console.log(ua);
+      
+      // Saves image I can convert back to base64
+      var ua = Base64Encoder.convertBase64StringToBytes(dt.split(',')[1]);
+      cb(ua);
     };
 
     /**
@@ -290,13 +448,19 @@
      * @description raw binary data to base64 image
      */
     this.rawToB64 = function(dt, cb) {
-      // TO DO NOT WORKING
-      $http.post('http://127.0.0.1:9998/encode', dt).success(function(res) {
-        return cb(res);
-      }).error(function(err) {
-        return cb('Error!');
-      });
+      // Attempts to convert viewable image to base64
+      // var ab = new ArrayBuffer(dt.length);
+      // var ua = new Uint8Array(ab);
+      // for(i=0; i < dt.length; i++) {
+        // ua[i] = dt.charCodeAt(i);
+      // }
+      // var b64data = btoa(ua);
+      // console.log(ua, b64data);
 
+      // Converts non-viewable image to base64
+      var dt = JSON.parse("["+ dt +"]");
+      var encoded = Base64Encoder.convertBytesToBase64String(dt);
+      cb(encoded);
     };
 
     // opts : canvas, img, width
