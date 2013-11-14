@@ -309,15 +309,12 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
   };
 
   $scope.editMode = function(content) {
-    console.log(content)
     PhotoshopService.rawToB64(content.data, function(data) {
-      // TO DO, NOT WORKING
-      // console.log(data);
-      window.open('data:img/png;base64,'+data);
+      var imageData = 'data:image/png;base64,'+data;
+      content.image = PhotoshopService.dataUrlToImage(imageData);
+      PhotoshopService.loadSavedImg(content);
     });
   };
-
-  var imgG;
 
   $scope.saveImg = function(mt, dt) {
     Orion.emit('loading', 'Creating File');

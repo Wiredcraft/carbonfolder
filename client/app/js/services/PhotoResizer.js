@@ -392,6 +392,23 @@ function Base64Encoder()
     };
 
     /**
+     * @method loadSavedImg
+     * @description place uploaded image onto canvas
+     */
+    this.loadSavedImg = function(content) {
+      Context.current_image = content;
+      var img = content.image;
+
+      var canvas = document.getElementById('originalImage');
+      var ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      if (canvas.style.display != "block") { canvas.style.display = "block" }
+    };
+
+    /**
      * @method copyImageFromCanvasId
      * @description copy image from a canvas
      */
