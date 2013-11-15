@@ -313,8 +313,9 @@ function Base64Encoder()
 
     
     editor.link = function(scope, el, attrs) {
-      // Set Context's canvas element
+      // Set Context's canvas element & CTX context
       Context.canvas_el = el.find('#originalImage')[0];
+      Context.ctx = Context.canvas_el.getContext("2d");
 
       PhotoshopService.loadImgFromFs('imageLoader', function(err, img) {
         Context.push_image(img);
