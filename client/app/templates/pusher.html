@@ -5,15 +5,17 @@
   <section id="body">               
     <span><b>Github</b> <a class="button" ng-click="oauthGithub()">Authorize</a></span>
     <ul>
-      <li ng-repeat="repo in repositories"
+      <li class='pusher-list'
+          ng-repeat="repo in repositories"
           ng-click="getRepoInfos(repo)">
-        <span><a href=''>{{repo.full_name}}</a></span>
-        <div ng-show="repo.branch_selected">
-          <select ng-model="repo.branch_selected"
-                  ng-options="branch for branch in repo.branches">
-          </select>
-          <a class="button" ng-click="pushContent(repo)">Push</a>
-        </div>
+        <span>
+          <a href=''>{{repo.full_name}}</a>
+            <select ng-show="repo.branch_selected"
+                    ng-model="repo.branch_selected"
+                    ng-options="branch for branch in repo.branches">
+            </select>
+            <a class="sml-btn" href='' ng-show="repo.branch_selected" ng-click="pushContent(repo)">Push</a>
+        </span>
       </li>
     </ul>
   </section>

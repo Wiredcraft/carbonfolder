@@ -224,8 +224,8 @@ function Base64Encoder()
         '<input type="text" placeholder="Image Name" ng-model="imgName" ng-show="Context.current_image" ng-hide="Context.cropping || Context.resizing"><br/>' +
         '<a class="btn" ng-hide="Context.resizing" ng-click="cropImage()">Crop</a>' + 
         '<a class="btn" ng-hide="Context.cropping" ng-click="resizeImage()">Resize</a>' +
-        '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="undo()">Undo</a>' +
-        '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="redo()">Redo</a>' +
+        // '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="undo()">Undo</a>' +
+        // '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="redo()">Redo</a>' +
         '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="psSaveImg()">Save</a>' +
         '</div>' +
         '</div>' +
