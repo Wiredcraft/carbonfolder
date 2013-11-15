@@ -208,7 +208,8 @@ function Base64Encoder()
       transclude : true,
       scope : { 
         title : '@',
-        save : '&'
+        save : '&',
+        delimg: '&'
       },
       template : '<div class="ps">' +
         '<h3>{{title}}</h3>' +
@@ -217,7 +218,7 @@ function Base64Encoder()
         '<div id="ps-actions">' +
         '<div ng-show="Context.resizing">' +
         '<form ng-submit="resizeImage()">' +
-        '<input placeholder="width" type="text" ng-model="resizeWidth">' +
+        '<input placeholder="Enter desired width" type="text" ng-model="resizeWidth">' +
         '</form>' +
         '</div>' +
         '<br/><div id="ps-toolbar" ng-show="Context.current_image">' +
@@ -227,6 +228,7 @@ function Base64Encoder()
         // '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="undo()">Undo</a>' +
         // '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="redo()">Redo</a>' +
         '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="psSaveImg()">Save</a>' +
+        '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="psRemoveImg()">Delete</a>' +
         '</div>' +
         '</div>' +
         '<br/>' + 
@@ -280,6 +282,10 @@ function Base64Encoder()
             data : img_dt
           });
         });
+      };
+
+      $scope.psRemoveImg = function() {
+        $scope.delimg();
       };
 
       $scope.resizeImage = function() {
@@ -361,33 +367,30 @@ function Base64Encoder()
      * @description clear Photoshop Context
      */
     this.clearContext = function() {
-      Context = {
-        current_image : null,
-        // canvas_el     : document.getElementById('originalImage'),
-        ctx           : null,
-        cropping      : false,
-        resizing      : false,
-        img_phases    : [],
-        img_curr_index: 0,
-        push_image    : function(image) {
-          Context.current_image = image;            
-          Context.img_phases.push(image);
-          Context.img_phases.slice(0, Context.img_curr_index);
-          Context.img_curr_index += 1;
-        },
-        undo          : function() {
-          if (Context.img_curr_index > 1)
-            Context.img_curr_index -= 1;        
-          Context.current_image = Context.img_phases[Context.img_curr_index - 1];
-          return Context.current_image;
-        },
-        redo          : function() {
-          if (Context.img_curr_index < Context.img_phases.length)
-            Context.img_curr_index += 1;
-          return Context.current_image = Context.img_phases[Context.img_curr_index - 1];
-        }
-      };
+      Context.current_image = null;
+      Context.ctx = null;
+      Context.cropping = false;
+      Context.resizing = false;
+      Context.img_phases = [];
+      Context.img_curr_index = 0;
     };
+
+    /**
+     * @method clearCanvas
+     * @description clear the canvas
+     */
+    this.clearCanvas = function() {
+      var canvas = Context.canvas_el;
+      var ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Reset Context too!
+      Context.current_image = null;
+      Context.ctx = null;
+      Context.cropping = false;
+      Context.resizing = false;
+      Context.img_phases = [];
+      Context.img_curr_index = 0;
+    }
 
     /**
      * @method loadImgFromFs
@@ -412,7 +415,6 @@ function Base64Encoder()
     this.initCrop = Crop.initCrop;
 
     this.getCroppedPart = Crop.getCroppedPart;
-
 
     /**
      * @method drawImg

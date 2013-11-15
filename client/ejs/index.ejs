@@ -125,6 +125,8 @@
           </header>
           <section class='body'>
             
+            <!-- !!TODO!! -->
+            <!-- this should just be an array -->
             <a ng-repeat='(key, type) in Context.types | filter:typeSearch'
                ng-click='editMode(type)' href=''>
               {{ type.name }}
@@ -147,7 +149,7 @@
         {{ User.get().name }}
       </a>
 
-      <!-- <a href='' ng-click='debugMe()'><code>Console.log(Context)</code></a> -->
+      <a href='' ng-click='debugMe()'><code>Console.log(Context)</code></a>
       <!-- <a href='' ng-click='logUser()'><code>Console.log(User)</code></a> -->
     </nav>
 

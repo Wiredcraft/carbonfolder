@@ -261,7 +261,6 @@ MCtrl.controller('ProjectCtrl', ['$scope', '$location', 'User', 'Dropbox', 'Cont
 
   $scope.remove = function() {
     var filepath = Context.current_project + '/content/' + Context.current_content.meta.type + '/' + Context.current_content.meta.filename;
-    console.log(filepath);
     Dropbox.remove(filepath, function(err, data) {
       if (err) alert(err);
       Orion.emit('end', 'File deleted');
@@ -273,14 +272,21 @@ MCtrl.controller('ProjectCtrl', ['$scope', '$location', 'User', 'Dropbox', 'Cont
   };
 
   $scope.submit = function() {
+    Context.current_content.data['category'] = Context.current_content.meta.type;
     var yaml_content = jsYaml.jsonToYaml(Context.current_content.data);
+    
+    // If filename has .md save, if not add .md and save
+    var fileNameParts = Context.current_content.meta.filename.split('.');
+    if (fileNameParts.length > 1) {
+      var filename = Context.current_content.meta.filename;
+    } else {
+      var filename = Context.current_content.meta.filename + '.md';
+    }
 
     Orion.emit('loading', 'Creating file');
-
-    //Context.current_content.meta.type
     Dropbox.createFileForProject(Context.current_project,
                                  Context.current_content.meta.type,
-                                 Context.current_content.meta.filename,
+                                 filename,
                                  yaml_content, function(err, dt) {
                                    if (err) alert(err);
                                    Orion.emit('end', 'File created/updated');
@@ -308,6 +314,7 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
   $scope.add = function() {};
 
   $scope.editMode = function(content) {
+    Context.current_media = content.name; // Store current img info
     PhotoshopService.rawToB64(content.data, function(data) {
       var x = content.name.split('.');
       var ext = x[1];
@@ -326,6 +333,23 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
         $scope.$apply();
       });
     });
+  };
+
+  $scope.deleteImg = function() {
+    var filepath = Context.current_project + '/media/' + Context.current_media;
+    Dropbox.remove(filepath, function(err, data) {
+      if (err) return alert(err);
+      Orion.emit('end', 'File deleted');
+      Context.refreshProjectContext(Context.current_project, true, function() {
+        Context.current_media = null;
+        PhotoshopService.clearCanvas();
+        $scope.$apply();
+      });
+    });
+  };
+
+  $scope.add = function() {
+    PhotoshopService.clearCanvas();
   };
 
 }]);
@@ -357,8 +381,6 @@ MCtrl.controller('TypesCtrl', ['$scope', 'User', 'Dropbox', 'Context', function(
   };
 
   $scope.add = baseType;
-
-  //baseType();
 
   $scope.keyNumbers = function(object) { return Object.keys(object).length; };
 
