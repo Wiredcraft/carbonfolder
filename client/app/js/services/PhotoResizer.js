@@ -227,7 +227,6 @@ function Base64Encoder()
         '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="undo()">Undo</a>' +
         '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="redo()">Redo</a>' +
         '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="psSaveImg()">Save</a>' +
-        '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="log()">LOG</a>' +
         '</div>' +
         '</div>' +
         '<br/>' + 
@@ -258,10 +257,6 @@ function Base64Encoder()
         }
         Context.cropping = !Context.cropping;
       };
-      
-      $scope.log = function() {
-        console.log(Context.current_image);
-      };
 
       $scope.undo = function() {
         Context.undo();
@@ -290,7 +285,7 @@ function Base64Encoder()
       $scope.resizeImage = function() {
         if (Context.resizing) {
           $scope.processing = true;
-          
+
           PhotoshopService.resize({
             canvas : Context.canvas_el,
             img    : Context.current_image,
@@ -318,6 +313,9 @@ function Base64Encoder()
 
     
     editor.link = function(scope, el, attrs) {
+      // Set Context's canvas element
+      Context.canvas_el = el.find('#originalImage')[0];
+
       PhotoshopService.loadImgFromFs('imageLoader', function(err, img) {
         Context.push_image(img);
 
@@ -357,9 +355,39 @@ function Base64Encoder()
       return Context.canvas_el.toDataURL();
     };
 
+    /**
+     * @method clearContext
+     * @description clear Photoshop Context
+     */
+    this.clearContext = function() {
+      Context = {
+        current_image : null,
+        // canvas_el     : document.getElementById('originalImage'),
+        ctx           : null,
+        cropping      : false,
+        resizing      : false,
+        img_phases    : [],
+        img_curr_index: 0,
+        push_image    : function(image) {
+          Context.current_image = image;            
+          Context.img_phases.push(image);
+          Context.img_phases.slice(0, Context.img_curr_index);
+          Context.img_curr_index += 1;
+        },
+        undo          : function() {
+          if (Context.img_curr_index > 1)
+            Context.img_curr_index -= 1;        
+          Context.current_image = Context.img_phases[Context.img_curr_index - 1];
+          return Context.current_image;
+        },
+        redo          : function() {
+          if (Context.img_curr_index < Context.img_phases.length)
+            Context.img_curr_index += 1;
+          return Context.current_image = Context.img_phases[Context.img_curr_index - 1];
+        }
+      };
+    };
 
-
-    
     /**
      * @method loadImgFromFs
      * @description Load image from Filesystem   
@@ -493,7 +521,7 @@ function Base64Encoder()
       if (!(isDef(opts.canvas) && isDef(opts.img) && isDef(opts.width))) {
         return cb(new Error('canvas, img or width not defined'));
       }
-      
+
       new thumbnailer(opts.canvas, opts.img, opts.width, lobes, function(imageData, canvas) {
         var canvas_dt = canvas.toDataURL("image/" + format);
         return cb(null, canvas_dt);

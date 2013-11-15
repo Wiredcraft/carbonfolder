@@ -302,6 +302,8 @@ MCtrl.controller('ProjectCtrl', ['$scope', '$location', 'User', 'Dropbox', 'Cont
 MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'PhotoshopService', function($scope, User, Dropbox, Context, PhotoshopService) {
 
   $scope.Context = Context;
+  Context.current_media = null;
+  PhotoshopService.clearContext();
 
   $scope.add = function() {};
 
