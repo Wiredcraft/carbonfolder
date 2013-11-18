@@ -232,7 +232,7 @@ function Base64Encoder()
         '</div>' +
         '</div>' +
         '<br/>' + 
-        '<input type="file" id="imageLoader" name="imageLoader"/>' +
+        '<input type="file" id="imageLoader" name="imageLoader" ng-hide="Context.current_image" />' +
         '<img id="crop_result">' + 
         '</div>'
     };
@@ -323,8 +323,9 @@ function Base64Encoder()
       Context.canvas_el = el.find('#originalImage')[0];
       Context.ctx = Context.canvas_el.getContext("2d");
 
-      PhotoshopService.loadImgFromFs('imageLoader', function(err, img) {
+      PhotoshopService.loadImgFromFs('imageLoader', function(err, img, name) {
         Context.push_image(img);
+        scope.imgName = name;
 
         var canvas = Context.canvas_el = el.find('#originalImage')[0];
         var ctx = Context.ctx = canvas.getContext("2d");        
@@ -399,15 +400,17 @@ function Base64Encoder()
     this.loadImgFromFs = function(file_input_id, cb) {
       var imageLoader = document.getElementById(file_input_id);
       var reader = new FileReader();
+      var name = '';
       
       imageLoader.addEventListener('change', function(e) {
         reader.onload = function(event){
           var img = new Image();
           img.onload = function() {
-            return cb(null, img);
+            return cb(null, img, name);
           };
           img.src = event.target.result;
         };
+        name = e.target.files[0].name;
         reader.readAsDataURL(e.target.files[0]);
       }, false);
     };
