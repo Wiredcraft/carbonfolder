@@ -165,7 +165,7 @@ MCtrl.controller('PusherCtrl', ['$scope', '$location', '$http', 'Context', funct
         tree[key].contents.forEach(function(cnt) {
           ret.push({
             content : jsYaml.jsonToYaml(cnt.data),
-            filepath : '_posts' + '/' + b_path + '/' + '2012-12-23-' + cnt.filename.replace(/ /g, '-')
+            filepath : '_posts' + '/' + b_path + '/' + cnt.data.date + '-' + cnt.filename.replace(/ /g, '-')
           });
         });
       });
