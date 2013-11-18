@@ -147,13 +147,15 @@ MCtrl.controller('PusherCtrl', ['$scope', '$location', '$http', 'Context', funct
     repo.listBranches(function(err, branches) {
       repoStruct.branches = branches;
       repoStruct.branch_selected = branches[0];
-      console.log(repoStruct, branches);
+      // console.log(repoStruct, branches);
       $scope.$apply();
     });
 
   };
 
   $scope.pushContent = function(repoStruct) {
+    Orion.emit('loading', 'Preparing to Push');
+
     var repo = github.getRepo(userDt.login, repoStruct.name);
 
     function transposate_context(tree) {
@@ -163,6 +165,7 @@ MCtrl.controller('PusherCtrl', ['$scope', '$location', '$http', 'Context', funct
         var b_path = key;
 
         tree[key].contents.forEach(function(cnt) {
+          Orion.emit('loading', 'Pushing: ' + cnt.filename +'');
           ret.push({
             content : jsYaml.jsonToYaml(cnt.data),
             filepath : '_posts' + '/' + b_path + '/' + cnt.data.date + '-' + cnt.filename.replace(/ /g, '-')
@@ -174,11 +177,12 @@ MCtrl.controller('PusherCtrl', ['$scope', '$location', '$http', 'Context', funct
 
     var new_tree = transposate_context(Context.types);
 
-    console.log(new_tree);
+    // console.log(new_tree);
     //new_tree.forEach(function(file) {
 
     function fin() {
-      console.log('end');
+      // console.log('end');
+      Orion.emit('end', 'Content Pushed');
     }
 
     (function ex(new_tree) {
@@ -188,7 +192,7 @@ MCtrl.controller('PusherCtrl', ['$scope', '$location', '$http', 'Context', funct
                  file.filepath,
                  file.content,
                  'Writing ' + file.filepath, function(err) {
-                   console.log(arguments);
+                   // console.log(arguments);
                    new_tree.shift();
                    ex(new_tree);
                  });
@@ -206,7 +210,7 @@ MCtrl.controller('PusherCtrl', ['$scope', '$location', '$http', 'Context', funct
 
     user.me(function(err, data) {
       userDt = data;
-      console.log(userDt);
+      // console.log(userDt);
     });
 
     user.repos(function(err, repos) {
@@ -220,7 +224,7 @@ MCtrl.controller('PusherCtrl', ['$scope', '$location', '$http', 'Context', funct
     if (code){
       $http({method : 'GET', url : 'http://localhost:9998/authenticate/' + code})
       .success(function(data) {
-        console.log(data.token);
+        // console.log(data.token);
         logGithub(data.token);
       }).error(function(e) {
         alert(e);
