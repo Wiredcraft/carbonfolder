@@ -205,7 +205,7 @@ function Base64Encoder()
     var editor = {
       restrict : 'E',
       replace : true,
-      transclude : true,
+      // transclude : true,
       scope : { 
         title : '@',
         save : '&',
@@ -222,7 +222,7 @@ function Base64Encoder()
         '</form>' +
         '</div>' +
         '<br/><div id="ps-toolbar" ng-show="Context.current_image">' +
-        '<input type="text" placeholder="Image Name" ng-model="imgName" ng-show="Context.current_image" ng-hide="Context.cropping || Context.resizing"><br/>' +
+        '<input type="text" placeholder="New Image Name" ng-model="imgName" ng-show="Context.current_image" ng-hide="Context.cropping || Context.resizing"><br/>' +
         '<a class="btn" ng-hide="Context.resizing" ng-click="cropImage()">Crop</a>' + 
         '<a class="btn" ng-hide="Context.cropping" ng-click="resizeImage()">Resize</a>' +
         // '<a class="btn" ng-hide="Context.cropping || Context.resizing" ng-click="undo()">Undo</a>' +
@@ -277,8 +277,10 @@ function Base64Encoder()
       $scope.psSaveImg = function() {
         PhotoshopService.b64ToRaw(Context.canvas_el.toDataURL(), function(data) {
           var img_dt = data;
+          var img_name = $scope.imgName;
+          $scope.imgName = null;
           $scope.save({
-            meta : $scope.imgName, // or uploaded file's name
+            meta : img_name, // or uploaded file's name
             data : img_dt
           });
         });

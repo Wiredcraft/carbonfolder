@@ -315,8 +315,6 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
   Context.current_media = null;
   PhotoshopService.clearContext();
 
-  $scope.add = function() {};
-
   $scope.editMode = function(content) {
     Context.current_media = content.name; // Store current img info
     PhotoshopService.rawToB64(content.data, function(data) {
@@ -329,8 +327,23 @@ MCtrl.controller('MediaCtrl', ['$scope', 'User', 'Dropbox', 'Context', 'Photosho
   };
 
   $scope.saveImg = function(mt, dt) {
+    // IF user has not typed into name box, do not send the name
+    // ? add 3rd attribute? boolean to save as new or update already saved image
+    var name = '';
+    if (mt == undefined || mt == null) {
+      name = Context.current_media;
+    } else {
+      name = mt;
+    }
+
+    // If there is still no save name, prompt user for one.
+    if (name == undefined || name == null) {
+      name = prompt('Name to save file as: ');
+      name = name.toString();
+    }
+
     Orion.emit('loading', 'Creating File');
-    Dropbox.writeFile(Context.current_project + '/media/' + mt, dt, function() {
+    Dropbox.writeFile(Context.current_project + '/media/' + name, dt, function() {
       Orion.emit('end', 'File saved');
       Context.refreshProjectContext(Context.current_project, true, function() {
         // Context.current_content = null;
