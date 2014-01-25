@@ -1,8 +1,8 @@
-# Focused.io
+# DCMS
 
-Focused.io app is a standalone web app who permits you to manage content.
+A decentralized content management system.
 
-## Launching the schmilblick 
+## Running DCMS
 
 ### Launching the client
 
@@ -12,7 +12,7 @@ $ npm install
 $ grunt
 ```
 
-Then connect to `http://localhost:9001`
+Then go to `http://localhost:9001`.
 
 ### Launching the server (for pushing on Github)
 
@@ -24,7 +24,7 @@ $ node server.js
 
 You can now push content to Github.
 
-## How focused.io works ?
+## How DCMS works ?
 
 Once you are on `http://localhost:9001` you have to :
 
